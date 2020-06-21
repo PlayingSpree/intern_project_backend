@@ -37,16 +37,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-<<<<<<< Updated upstream
     'rest_framework',
     'rest_framework.authtoken',
     'authapp',
     'drf_yasg',
-    'djoser'
-=======
-    'users.apps.UsersConfig',
-    'rest_framework',
->>>>>>> Stashed changes
+    'djoser',
+    'corsheaders',
+
 ]
 
 MIDDLEWARE = [
@@ -57,7 +54,12 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.BrokenLinkEmailsMiddleware',
+    'django.middleware.common.CommonMiddleware',
 ]
+
+CORS_ORIGIN_ALLOW_ALL = True
 
 ROOT_URLCONF = 'intern_project_backend.urls'
 
