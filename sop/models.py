@@ -8,7 +8,7 @@ def post_file_name(instance, filename):
 
 class Post(models.Model):
     name = models.CharField(max_length=64)
-    description = models.TextField()
+    description = models.TextField(null=True, blank=True)
     cover = models.ImageField(null=True, upload_to=post_file_name)
     publish = models.BooleanField(default=False)
     creator_id = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
@@ -20,7 +20,7 @@ def course_file_name(instance, filename):
 
 class Course(models.Model):
     name = models.CharField(max_length=64)
-    description = models.TextField()
+    description = models.TextField(null=True, blank=True)
     cover = models.ImageField(null=True, upload_to=course_file_name)
     publish = models.BooleanField(default=False)
     creator_id = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
@@ -42,8 +42,8 @@ def step_file_name(instance, filename):
 
 class Step(models.Model):
     name = models.CharField(max_length=64)
-    textcontent = models.TextField()
-    link = models.TextField()
+    textcontent = models.TextField(null=True, blank=True)
+    link = models.TextField(null=True, blank=True)
     cover_type = models.IntegerField(default=0)  # 0=None 1=Image 2=Video
     cover_file = models.FileField(null=True, upload_to=step_file_name)
     contents = models.ManyToManyField(StepFile)
