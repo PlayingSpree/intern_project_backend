@@ -1,9 +1,10 @@
 from django.db import models
 from authapp.models import User
+import os.path
 
 
 def post_file_name(instance, filename):
-    return '/'.join(['uploads/post/', instance.id, 'cover', filename])
+    return '/'.join(['uploads/post/', str(instance.id), 'cover{0}'.format(os.path.splitext(filename)[1])])
 
 
 class Post(models.Model):
@@ -13,9 +14,21 @@ class Post(models.Model):
     publish = models.BooleanField(default=False)
     creator_id = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
 
+    # Model Save override to set id as filename
+    def save(self, *args, **kwargs):
+        if self.id is None:
+            cover = self.cover
+            self.cover = None
+            super(Post, self).save(*args, **kwargs)
+            self.cover = cover
+            if 'force_insert' in kwargs:
+                kwargs.pop('force_insert')
+
+        super(Post, self).save(*args, **kwargs)
+
 
 def course_file_name(instance, filename):
-    return '/'.join(['uploads/course/', instance.id, 'cover', filename])
+    return '/'.join(['uploads/course/', str(instance.id), 'cover{0}'.format(os.path.splitext(filename)[1])])
 
 
 class Course(models.Model):
@@ -25,6 +38,18 @@ class Course(models.Model):
     publish = models.BooleanField(default=False)
     creator_id = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     posts = models.ManyToManyField(Post)
+
+    # Model Save override to set id as filename
+    def save(self, *args, **kwargs):
+        if self.id is None:
+            cover = self.cover
+            self.cover = None
+            super(Course, self).save(*args, **kwargs)
+            self.cover = cover
+            if 'force_insert' in kwargs:
+                kwargs.pop('force_insert')
+
+        super(Course, self).save(*args, **kwargs)
 
 
 def stepfile_file_name(instance, filename):
@@ -37,7 +62,7 @@ class StepFile(models.Model):
 
 
 def step_file_name(instance, filename):
-    return '/'.join(['uploads/step/', instance.id, 'cover', filename])
+    return '/'.join(['uploads/step/', str(instance.id), 'cover{0}'.format(os.path.splitext(filename)[1])])
 
 
 class Step(models.Model):
@@ -48,6 +73,18 @@ class Step(models.Model):
     cover_file = models.FileField(null=True, upload_to=step_file_name)
     contents = models.ManyToManyField(StepFile)
     post_id = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    # Model Save override to set id as filename
+    def save(self, *args, **kwargs):
+        if self.id is None:
+            cover = self.cover_file
+            self.cover_file = None
+            super(Step, self).save(*args, **kwargs)
+            self.cover_file = cover
+            if 'force_insert' in kwargs:
+                kwargs.pop('force_insert')
+
+        super(Step, self).save(*args, **kwargs)
 
 
 class SopHistory(models.Model):
