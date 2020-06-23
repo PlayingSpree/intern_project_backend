@@ -1,3 +1,5 @@
+import os.path
+
 from django.db import models
 
 # Create your models here.
@@ -6,7 +8,7 @@ from authapp.models import User
 
 
 def group_image_upload(instance, filename):
-    return '/'.join(['upload/group/', instance.id, 'grp_image', filename])
+    return '/'.join(['upload/group/', str(instance.id), 'grp_image{0}'.format(os.path.splitext(filename)[1])])
 
 
 class Group(models.Model):
@@ -23,6 +25,18 @@ class Group(models.Model):
     def __str__(self):
         return self.grp_name
 
+    # Model Save override to set id as filename
+    def save(self, *args, **kwargs):
+        if self.id is None:
+            grp_image = self.grp_image
+            self.grp_image = None
+            super(Group, self).save(*args, **kwargs)
+            self.grp_image = grp_image
+            if 'force_insert' in kwargs:
+                kwargs.pop('force_insert')
+
+        super(Group, self).save(*args, **kwargs)
+
 
 class GroupRole(models.Model):
     group_id = models.OneToOneField(Group, on_delete=models.CASCADE, related_name='group_id', null=True)
@@ -37,16 +51,28 @@ class Course(models.Model):
 
 
 def course_file_upload(instance, filename):
-    return '/'.join(['upload/part/', instance.id, 'vdo_file', filename])
+    return '/'.join(['upload/part/', str(instance.id), 'vdo_file{0}'.format(os.path.splitext(filename)[1])])
 
 
 class Video(models.Model):
     vdo_name = models.CharField(max_length=100, default='', unique=True)
     vdo_file = models.FileField(null=True, upload_to=course_file_upload)
 
+    # Model Save override to set id as filename
+    def save(self, *args, **kwargs):
+        if self.id is None:
+            vdo_file = self.vdo_file
+            self.vdo_file = None
+            super(Video, self).save(*args, **kwargs)
+            self.vdo_file = vdo_file
+            if 'force_insert' in kwargs:
+                kwargs.pop('force_insert')
+
+        super(Video, self).save(*args, **kwargs)
+
 
 def course_image_upload(instance, filename):
-    return '/'.join(['upload/course/', instance.id, 'course_image', filename])
+    return '/'.join(['upload/course/', str(instance.id), 'course_image{0}'.format(os.path.splitext(filename)[1])])
 
 
 class CourseDetail(models.Model):
@@ -61,6 +87,17 @@ class CourseDetail(models.Model):
     def __str__(self):
         return self.course_name
 
+    # Model Save override to set id as filename
+    def save(self, *args, **kwargs):
+        if self.id is None:
+            course_image = self.course_image
+            self.course_image = None
+            super(CourseDetail, self).save(*args, **kwargs)
+            self.course_image = course_image
+            if 'force_insert' in kwargs:
+                kwargs.pop('force_insert')
+
+        super(CourseDetail, self).save(*args, **kwargs)
 
 
 class Comment(models.Model):
