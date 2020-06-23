@@ -25,6 +25,7 @@ urlpatterns = [
     #url(r'^auth/obtain_token/', obtain_jwt_token),
     #url(r'^auth/refresh_token/', refresh_jwt_token),
     path('auth/', include('authapp.urls')),
+    path('group/', include('grouplearning.urls')),
 
     url(r'^api/$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
 ]
