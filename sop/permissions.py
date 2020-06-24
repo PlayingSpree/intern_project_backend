@@ -7,4 +7,4 @@ class IsCreatorUser(BasePermission):
     """
 
     def has_permission(self, request, view):
-        return bool(request.user and (request.user.sop_isCreator or request.user.is_staff))
+        return bool(request.user and (request.user.sop_is_creator or request.user.is_staff))
