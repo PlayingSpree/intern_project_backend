@@ -10,6 +10,5 @@ class PostSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Post
-        fields = ['id', 'name', 'description', 'cover', 'publish', 'creator', 'creator_id']
+        fields = ['id', 'name', 'description', 'cover', 'publish', 'creator']
         read_only_fields = ['id', 'creator']
-        extra_kwargs = {'creator_id': {'write_only': True}}
