@@ -1,6 +1,6 @@
 @echo off
-cd env\Scripts
-echo [Activating virtual env]
+cd venv\Scripts
+echo [Activating virtual venv]
 call activate
 echo.
 echo Done
@@ -15,3 +15,4 @@ echo.
 echo [Running Server]
 echo.
 py manage.py runserver
+pause
