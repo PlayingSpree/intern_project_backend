@@ -8,30 +8,30 @@ from authapp.models import User
 
 
 def group_image_upload(instance, filename):
-    return '/'.join(['upload/group/', str(instance.id), 'grp_image{0}'.format(os.path.splitext(filename)[1])])
+    return '/'.join(['upload/group/', str(instance.id), 'group_image{0}'.format(os.path.splitext(filename)[1])])
 
 
 class Group(models.Model):
-    grp_name = models.CharField(max_length=100, default='')
-    grp_description = models.CharField(null=True, max_length=250, default='')
+    group_name = models.CharField(max_length=100, default='')
+    group_description = models.CharField(null=True, max_length=250, default='')
     user_joined = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='user_joined', null=True)
-    grp_image = models.ImageField(null=True, upload_to=group_image_upload)
+    group_image = models.ImageField(null=True, upload_to=group_image_upload)
     creator_id = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     REQUIRED_FIELDS = ['grp_name']
 
     class Meta:
-        ordering = ['grp_name']
+        ordering = ['group_name']
 
     def __str__(self):
-        return self.grp_name
+        return self.group_name
 
     # Model Save override to set id as filename
     def save(self, *args, **kwargs):
         if self.id is None:
-            grp_image = self.grp_image
-            self.grp_image = None
+            group_image = self.group_image
+            self.group_image = None
             super(Group, self).save(*args, **kwargs)
-            self.grp_image = grp_image
+            self.group_image = group_image
             if 'force_insert' in kwargs:
                 kwargs.pop('force_insert')
 

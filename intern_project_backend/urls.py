@@ -1,12 +1,19 @@
 from django.conf.urls import url
 from django.contrib import admin
 from django.urls import path, include
+
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
 from rest_framework import permissions
-from rest_framework_jwt.views import obtain_jwt_token, refresh_jwt_token
+
+# TEMP for file serving
+from django.conf.urls.static import static
+from django.conf import settings
+
+# project import
 from intern_project_backend.views import index
+
 # swagger
 schema_view = get_schema_view(
    openapi.Info(
@@ -20,12 +27,9 @@ schema_view = get_schema_view(
 
 
 urlpatterns = [
+    path('group/', include('grouplearning.urls')),
     path('checkserver', index, name='index'),
     path('admin/', admin.site.urls),
-    #url(r'^auth/obtain_token/', obtain_jwt_token),
-    #url(r'^auth/refresh_token/', refresh_jwt_token),
     path('auth/', include('authapp.urls')),
-    path('group/', include('grouplearning.urls')),
-
-    url(r'^api/$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
-]
+    path('api/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) # TEMP for file serving

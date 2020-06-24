@@ -134,6 +134,8 @@ STATIC_URL = '/static/'
 
 # Extra library settings
 
+MEDIA_URL = '/media/' # Temp for file serving
+
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.BasicAuthentication',

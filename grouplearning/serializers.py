@@ -5,12 +5,11 @@ from djoser.serializers import UserSerializer
 from .models import Group
 
 
+# create group
 class GroupSerializer(serializers.ModelSerializer):
-    grp_creator = UserSerializer(source='creator_id')
+    group_creator = UserSerializer(source='creator_id', read_only=True)
 
     class Meta:
         model = Group
-        fields = ['id', 'grp_name', 'grp_description', 'grp_image', 'grp_creator']
-        read_only_fields = ['id', 'grp_creator']
-        extra_kwargs = {'creator_id': {'write_only: True'}}
-
+        fields = ['id', 'group_name', 'group_description', 'group_image', 'group_creator']
+        read_only_fields = ['id', 'group_creator']
