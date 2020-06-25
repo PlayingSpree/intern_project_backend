@@ -18,8 +18,8 @@ from intern_project_backend.views import index
 schema_view = get_schema_view(
    openapi.Info(
       title="Swagger API",
-      default_version='v1.420',
-      description="glhf",
+      default_version='v0.1',
+      description="Conicle Intern Project",
    ),
    public=True,
    permission_classes=(permissions.AllowAny,),
