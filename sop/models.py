@@ -1,3 +1,4 @@
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from authapp.models import User
 import os.path
@@ -13,6 +14,9 @@ class Post(models.Model):
     cover = models.ImageField(null=True, upload_to=post_file_name)
     publish = models.BooleanField(default=False)
     creator_id = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+
+    def __str__(self):
+        return '[Post id:{}] {}'.format(self.id, self.name)
 
     # Model Save override to set id as filename
     def save(self, *args, **kwargs):
@@ -69,10 +73,10 @@ class Step(models.Model):
     name = models.CharField(max_length=64)
     textcontent = models.TextField(null=True, blank=True)
     link = models.TextField(null=True, blank=True)
-    cover_type = models.IntegerField(default=0)  # 0=None 1=Image 2=Video
+    cover_type = models.IntegerField(default=0,
+                                     validators=[MaxValueValidator(2), MinValueValidator(0)])  # 0=None 1=Image 2=Video
     cover_file = models.FileField(null=True, upload_to=step_file_name)
-    contents = models.ManyToManyField(StepFile)
-    post_id = models.ForeignKey(User, on_delete=models.CASCADE)
+    post_id = models.ForeignKey(Post, on_delete=models.CASCADE)
 
     # Model Save override to set id as filename
     def save(self, *args, **kwargs):

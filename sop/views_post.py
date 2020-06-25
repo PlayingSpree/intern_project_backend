@@ -4,11 +4,11 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from sop.models import Post
-from sop.permissions import IsCreatorUser
+from sop.permissions import IsCreatorUser, MultiPermissionMixin
 from sop.serializers import PostSerializer
 
 
-class PostViewSet(viewsets.ModelViewSet):
+class PostViewSet(viewsets.ModelViewSet, MultiPermissionMixin):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
     permissions = [
@@ -16,12 +16,6 @@ class PostViewSet(viewsets.ModelViewSet):
         (['create', 'update', 'partial_update', 'destroy'], [IsCreatorUser])
     ]
     parser_classes = (MultiPartParser,)
-
-    def get_permissions(self):
-        for p in self.permissions:
-            if self.action in p[0]:
-                permission_classes = p[1]
-        return [permission() for permission in permission_classes]
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
