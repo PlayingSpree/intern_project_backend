@@ -1,3 +1,4 @@
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from authapp.models import User
 import os.path
@@ -13,6 +14,9 @@ class Post(models.Model):
     cover = models.ImageField(null=True, upload_to=post_file_name)
     publish = models.BooleanField(default=False)
     creator_id = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+
+    def __str__(self):
+        return '[Post id:{}] {}'.format(self.id, self.name)
 
     # Model Save override to set id as filename
     def save(self, *args, **kwargs):
@@ -39,6 +43,9 @@ class Course(models.Model):
     creator_id = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     posts = models.ManyToManyField(Post)
 
+    def __str__(self):
+        return '[Course id:{}] {}'.format(self.id, self.name)
+
     # Model Save override to set id as filename
     def save(self, *args, **kwargs):
         if self.id is None:
@@ -53,12 +60,15 @@ class Course(models.Model):
 
 
 def stepfile_file_name(instance, filename):
-    return '/'.join(['uploads/step/', instance.step_id, filename])
+    return '/'.join(['uploads/step/', str(instance.step_id.id), filename])
 
 
 class StepFile(models.Model):
     step_id = models.ForeignKey('Step', on_delete=models.CASCADE)
     file = models.FileField(null=True, upload_to=stepfile_file_name)
+
+    def __str__(self):
+        return '[StepFile id:{} step_id:{}] {}'.format(self.id, self.step_id, self.file)
 
 
 def step_file_name(instance, filename):
@@ -69,10 +79,13 @@ class Step(models.Model):
     name = models.CharField(max_length=64)
     textcontent = models.TextField(null=True, blank=True)
     link = models.TextField(null=True, blank=True)
-    cover_type = models.IntegerField(default=0)  # 0=None 1=Image 2=Video
+    cover_type = models.IntegerField(default=0,
+                                     validators=[MaxValueValidator(2), MinValueValidator(0)])  # 0=None 1=Image 2=Video
     cover_file = models.FileField(null=True, upload_to=step_file_name)
-    contents = models.ManyToManyField(StepFile)
-    post_id = models.ForeignKey(User, on_delete=models.CASCADE)
+    post_id = models.ForeignKey(Post, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return '[Step id:{}] {}'.format(self.id, self.name)
 
     # Model Save override to set id as filename
     def save(self, *args, **kwargs):
@@ -91,6 +104,10 @@ class SopHistory(models.Model):
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
     post_id = models.ForeignKey(Post, on_delete=models.CASCADE)
     datetime = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return '[SopHistory id:{}] User id [{}] read post id [{}] at {}'.format(self.id, self.user_id, self.post_id,
+                                                                                self.datetime)
 
     class Meta:
         unique_together = ['user_id', 'post_id']
