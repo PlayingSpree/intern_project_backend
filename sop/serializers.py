@@ -1,7 +1,7 @@
 from djoser.serializers import UserSerializer
 from rest_framework import serializers
 
-from .models import Post, Step, StepFile
+from .models import Post, Step, StepFile, Course
 
 
 class StepFileSerializer(serializers.ModelSerializer):
@@ -36,3 +36,12 @@ class PostSerializer(serializers.ModelSerializer):
         model = Post
         fields = ['id', 'name', 'description', 'cover', 'publish', 'creator', 'step']
         read_only_fields = ['id', 'creator', 'step']
+
+
+class CourseSerializer(serializers.ModelSerializer):
+    creator = UserSerializer(source='creator_id', read_only=True)
+
+    class Meta:
+        model = Course
+        fields = ['id', 'name', 'description', 'cover', 'publish', 'creator', 'posts']
+        read_only_fields = ['id', 'creator']
