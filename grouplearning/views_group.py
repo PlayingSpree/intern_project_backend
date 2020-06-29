@@ -4,11 +4,11 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from grouplearning.models import Group
-from grouplearning.permissions import IsCreatorUser
+from grouplearning.permissions import IsCreatorUser, MultiPermissionMixin
 from grouplearning.serializers import GroupSerializer
 
 
-class GroupViewSet(viewsets.ModelViewSet):
+class GroupViewSet(viewsets.ModelViewSet, MultiPermissionMixin):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
     parser_classes = (MultiPartParser,)

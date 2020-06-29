@@ -12,9 +12,9 @@ def group_image_upload(instance, filename):
 
 
 class Group(models.Model):
-    group_name = models.CharField(max_length=100, default='')
-    group_description = models.CharField(null=True, max_length=250, default='')
-    user_joined = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='user_joined', null=True)
+    group_name = models.CharField(max_length=100)
+    group_description = models.CharField(null=True, blank=True, max_length=250)
+    user_joined = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_joined', null=True)
     group_image = models.ImageField(null=True, upload_to=group_image_upload)
     creator_id = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     REQUIRED_FIELDS = ['grp_name']
