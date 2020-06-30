@@ -45,3 +45,12 @@ class CourseSerializer(serializers.ModelSerializer):
         model = Course
         fields = ['id', 'name', 'description', 'cover', 'publish', 'creator', 'posts']
         read_only_fields = ['id', 'creator']
+
+
+class CourseCreateSerializer(serializers.ModelSerializer):
+    posts = serializers.ListSerializer(child=serializers.IntegerField())
+    cover = serializers.ImageField(required=False)
+
+    class Meta:
+        model = Course
+        fields = ['name', 'description', 'cover', 'publish', 'posts']
