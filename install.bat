@@ -1,7 +1,7 @@
 @echo off
 echo [Creating virtual env]
-py -m venv env
-cd env\Scripts
+py -m venv venv
+cd venv\Scripts
 echo [Activating virtual env]
 call activate
 cd ..
