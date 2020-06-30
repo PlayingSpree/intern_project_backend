@@ -30,4 +30,9 @@ class GroupViewSet(viewsets.ModelViewSet, MultiPermissionMixin):
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
-
+    def destroy(self, request, *args, **kwargs):
+        if request.user.id == Group.creator_id:
+            instance = self.get_object()
+            self.perform_destroy(instance)
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        else:
