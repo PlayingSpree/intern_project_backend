@@ -8,16 +8,15 @@ from authapp.models import User
 
 
 def group_image_upload(instance, filename):
-    return '/'.join(['upload/group/', str(instance.id), 'group_image{0}'.format(os.path.splitext(filename)[1])])
+    return '/'.join(['uploads/group', str(instance.id), 'group_image{0}'.format(os.path.splitext(filename)[1])])
 
 
 class Group(models.Model):
     group_name = models.CharField(max_length=100)
     group_description = models.CharField(null=True, blank=True, max_length=250)
-    user_joined = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_joined', null=True)
+    user_joined = models.ManyToManyField(User, related_name='user_joined')
+    # default_course = models.ForeignKey(Course, on_delete=models.CASCADE)
     group_image = models.ImageField(null=True, upload_to=group_image_upload)
-    creator_id = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
-    REQUIRED_FIELDS = ['grp_name']
 
     class Meta:
         ordering = ['group_name']
@@ -38,81 +37,103 @@ class Group(models.Model):
         super(Group, self).save(*args, **kwargs)
 
 
-class GroupRole(models.Model):
-    group_id = models.OneToOneField(Group, on_delete=models.CASCADE, related_name='group_id', null=True)
-    user_id = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='user_id', null=True)
-    role = models.CharField(max_length=100, default='')
+class CommentStep(models.Model):
+    group_id = models.ForeignKey(Group, on_delete=models.CASCADE)
+    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+    # step_id = models.ForeignKey(Step, on_delete=models.CASCADE)
+    text = models.TextField()
 
 
-class Course(models.Model):
-    grp_id = models.ForeignKey(Group, on_delete=models.CASCADE, related_name='grp_id', null=True)
-    authorized_role = models.CharField(max_length=100, default='')
-    REQUIRED_FIELDS = ['authorized_role']
+class CommentStepReply(models.Model):
+    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+    parent_id = models.ForeignKey(CommentStep, on_delete=models.CASCADE)
+    text = models.TextField()
 
 
-def course_file_upload(instance, filename):
-    return '/'.join(['upload/part/', str(instance.id), 'vdo_file{0}'.format(os.path.splitext(filename)[1])])
+class CommentGroup(models.Model):
+    group_id = models.ForeignKey(Group, on_delete=models.CASCADE)
+    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+    text = models.TextField()
 
 
-class Video(models.Model):
-    vdo_name = models.CharField(max_length=100, default='', unique=True)
-    vdo_file = models.FileField(null=True, upload_to=course_file_upload)
-
-    # Model Save override to set id as filename
-    def save(self, *args, **kwargs):
-        if self.id is None:
-            vdo_file = self.vdo_file
-            self.vdo_file = None
-            super(Video, self).save(*args, **kwargs)
-            self.vdo_file = vdo_file
-            if 'force_insert' in kwargs:
-                kwargs.pop('force_insert')
-
-        super(Video, self).save(*args, **kwargs)
+def comment_group_file_upload(instance, filename):
+    return '/'.join(['uploads/comment', str(instance.id), filename])
 
 
-def course_image_upload(instance, filename):
-    return '/'.join(['upload/course/', str(instance.id), 'course_image{0}'.format(os.path.splitext(filename)[1])])
-
-
-class CourseDetail(models.Model):
-    course_name = models.CharField(max_length=100, default='', unique=True)
-    course_description = models.CharField(max_length=250, null=True, default='')
-    course_id = models.OneToOneField(Course, on_delete=models.CASCADE, related_name='course_id', null=True)
-    vdo_id = models.ForeignKey(Video, on_delete=models.CASCADE, related_name='vdo_id', null=True)
-    publish = models.BooleanField(default=False)
-    course_image = models.ImageField(null=True, upload_to=course_image_upload)
-    REQUIRED_FIELDS = ['course_name']
-
-    def __str__(self):
-        return self.course_name
+class CommentGroupFile(models.Model):
+    comment_id = models.ForeignKey(CommentGroup, on_delete=models.CASCADE)
+    file = models.FileField(null=True, upload_to=comment_group_file_upload)
 
     # Model Save override to set id as filename
     def save(self, *args, **kwargs):
         if self.id is None:
-            course_image = self.course_image
-            self.course_image = None
-            super(CourseDetail, self).save(*args, **kwargs)
-            self.course_image = course_image
+            file = self.file
+            self.file = None
+            super(CommentGroupFile, self).save(*args, **kwargs)
+            self.file = file
             if 'force_insert' in kwargs:
                 kwargs.pop('force_insert')
 
-        super(CourseDetail, self).save(*args, **kwargs)
+        super(CommentGroupFile, self).save(*args, **kwargs)
+
+class CommentGroupReply(models.Model):
+    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+    parent_id = models.ForeignKey(CommentGroup, on_delete=models.CASCADE)
+    text = models.TextField()
 
 
-class Comment(models.Model):
-    course_id = models.ForeignKey(Course, on_delete=models.CASCADE)
-    review_text = models.CharField(max_length=100, blank=True, default='')
-    rating = models.PositiveIntegerField(null=True, blank=True)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='user', null=True, blank=True)
+class Assignment(models.Model):
+    group_id = models.ForeignKey(Group, on_delete=models.CASCADE)
+    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+    admin_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name='admin')
+    name = models.CharField(max_length=64)
+    description = models.TextField()
 
-    class Meta:
-        verbose_name = 'Rating'
-        verbose_name_plural = 'Ratings'
-        unique_together = [
-            'user', 'course_id'
-        ]
 
-    def __str__(self):
-        return self.review_text
+def assignment_file_upload(instance, filename):
+    return '/'.join(['uploads/assignment', str(instance.id), filename])
+
+
+class AssignmentFile(models.Model):
+    assignment_id = models.ForeignKey(Assignment, on_delete=models.CASCADE)
+    file = models.FileField(null=True, upload_to=assignment_file_upload)
+
+    # Model Save override to set id as filename
+    def save(self, *args, **kwargs):
+        if self.id is None:
+            file = self.file
+            self.file = None
+            super(AssignmentFile, self).save(*args, **kwargs)
+            self.file = file
+            if 'force_insert' in kwargs:
+                kwargs.pop('force_insert')
+
+        super(AssignmentFile, self).save(*args, **kwargs)
+
+
+class AssignmentWork(models.Model):
+    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+    assignment_id = models.ForeignKey(Assignment, on_delete=models.CASCADE)
+    text = models.TextField()
+
+
+def assignment_work_file_upload(instance, filename):
+    return '/'.join(['uploads/assignment/work', str(instance.id), filename])
+
+
+class AssignmentWorkFile(models.Model):
+    assignment_work_id = models.ForeignKey(AssignmentWork, on_delete=models.CASCADE)
+    file = models.FileField(null=True, upload_to=assignment_work_file_upload)
+
+    # Model Save override to set id as filename
+    def save(self, *args, **kwargs):
+        if self.id is None:
+            file = self.file
+            self.file = None
+            super(AssignmentWorkFile, self).save(*args, **kwargs)
+            self.file = file
+            if 'force_insert' in kwargs:
+                kwargs.pop('force_insert')
+
+        super(AssignmentWorkFile, self).save(*args, **kwargs)
 
