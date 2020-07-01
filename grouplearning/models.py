@@ -59,7 +59,7 @@ class CommentGroup(models.Model):
 
 
 def comment_group_file_upload(instance, filename):
-    return '/'.join(['uploads/comment/', str(instance.commentgroup.id.id), filename])
+    return '/'.join(['uploads/comment', str(instance.id), filename])
 
 
 class CommentGroupFile(models.Model):

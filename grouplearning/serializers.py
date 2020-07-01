@@ -19,23 +19,22 @@ class CommentGroupFileSerializer(serializers.ModelSerializer):
     class Meta:
         model = CommentGroupFile
         fields = ['id', 'comment_id', 'file']
-        read_only_fields = ['id', 'comment_id']
+        read_only_fields = ['id']
 
 
 class CommentGroupSerializer(serializers.ModelSerializer):
-    commentator = UserSerializer(source='user_id', read_only=True)
-    comment_group_file = CommentGroupFileSerializer()
+    commented_by = UserSerializer(source='user_id', read_only=True)
+    comment_group_files = serializers.SerializerMethodField(read_only=True)
+
+    def get_comment_group_files(self, obj):
+        serializer = CommentGroupFileSerializer(CommentGroupFile.objects.filter(assignment_id=obj.id), many=True,
+                                              read_only=True)
+        return serializer.data
 
     class Meta:
         model = CommentGroup
-        fields = ['id', 'group_id', 'text', 'comment_group_file', 'commentator']
-        read_only_fields = ['id', 'commentator']
-
-    def create(self, validated_data):
-        comment_group_file_data = validated_data.pop('comment_group_file')
-        CommentGroup_model = CommentGroup.objects.create(**validated_data)
-        CommentGroupFile.objects.create(CommentGroup_model=CommentGroup_model, **comment_group_file_data)
-        return CommentGroup_model
+        fields = ['id', 'group_id', 'text', 'comment_group_files', 'commented_by']
+        read_only_fields = ['id', 'commented_by', 'comment_group_files']
 
 
 class CommentGroupReplySerializer(serializers.ModelSerializer):

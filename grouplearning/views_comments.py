@@ -3,9 +3,9 @@ from rest_framework.parsers import MultiPartParser
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
 
-from grouplearning.models import CommentGroup
+from grouplearning.models import CommentGroup, CommentGroupFile
 from grouplearning.permissions import get_permissions_multi
-from grouplearning.serializers import CommentGroupSerializer
+from grouplearning.serializers import CommentGroupSerializer, CommentGroupFileSerializer
 
 
 class CommentGroupViewSet(viewsets.ModelViewSet):
@@ -19,4 +19,12 @@ class CommentGroupViewSet(viewsets.ModelViewSet):
         serializer.save(user_id=request.user)
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+
+class CommentGroupFileViewSet(viewsets.ModelViewSet):
+    queryset = CommentGroupFile.objects.all()
+    serializer_class = CommentGroupFileSerializer
+    permission_classes = [IsAuthenticated]
+
+
 
