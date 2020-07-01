@@ -44,14 +44,9 @@ class CommentGroupReplySerializer(serializers.ModelSerializer):
 
 
 class AddUserSerializer(serializers.ModelSerializer):
+    user_joined = serializers.ListSerializer(child=serializers.IntegerField())
 
     class Meta:
         model = Group
         fields = ['id', 'user_joined']
-
-    def update(self, instance, validated_data):
-        user_id = validated_data.pop('user_joined')
-        user_joined = Group.objects.create(**user_id)
-
-        return user_joined
-
+        extra_kwargs = {'id': {'read_only': False}}

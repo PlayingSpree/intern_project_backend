@@ -1,5 +1,5 @@
-
 from rest_framework import viewsets, status
+from rest_framework.exceptions import NotFound
 from rest_framework.generics import get_object_or_404
 from rest_framework.parsers import MultiPartParser
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
@@ -10,18 +10,22 @@ from grouplearning.models import Group
 from grouplearning.serializers import AddUserSerializer
 
 
-class AmountPartialUpdateView(APIView):
+class AddUserViewSet(viewsets.ModelViewSet):
+    queryset = Group.objects.all()
+    serializer_class = AddUserSerializer
+    permission_classes = [IsAuthenticated]
 
-    def patch(self, request, pk, user_id):
-        # if no model exists by this PK, raise a 404 error
-        model = get_object_or_404(Group, pk=pk)
-        # this is the only field we want to update
-        data = {"user_joined": Group.user_joined}
-        serializer = AddUserSerializer(model, data=data, partial=True)
+    def create(self, request, *args, **kwargs):
+        serializer = AddUserSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = Group.objects.create(
+            id=serializer.validated_data['id'],
+        )
+        if Group.objects.filter(group_id=serializer.validated_data['id']):
+            for user_joined in Group.objects.filter(id__in=serializer.validated_data['user_joined']):
+                user.user_joined.add(user_joined)
+        else:
+            NotFound
 
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        # return a meaningful error response
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
