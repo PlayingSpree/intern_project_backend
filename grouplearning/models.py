@@ -15,7 +15,7 @@ def group_image_upload(instance, filename):
 class Group(models.Model):
     group_name = models.CharField(max_length=100)
     group_description = models.CharField(null=True, blank=True, max_length=250)
-    user_joined = models.ManyToManyField(User, related_name='user_joined', default='')
+    user_joined = models.ManyToManyField(User, related_name='user_joined')
     default_course = models.ForeignKey(Course, null=True, on_delete=models.CASCADE)
     group_image = models.ImageField(null=True, upload_to=group_image_upload)
     creator_id = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -59,7 +59,7 @@ class CommentGroup(models.Model):
 
 
 def comment_group_file_upload(instance, filename):
-    return '/'.join(['uploads/comment', str(instance.id), filename])
+    return '/'.join(['uploads/comment/', str(instance.commentgroup.id.id), filename])
 
 
 class CommentGroupFile(models.Model):
