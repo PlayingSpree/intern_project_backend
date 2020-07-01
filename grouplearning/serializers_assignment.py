@@ -16,8 +16,8 @@ class AssignmentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Assignment
-        fields = ['id', 'group_id', 'admin', 'assigned_users', 'assignment_files', 'name', 'description']
-        read_only_fields = ['id', 'admin', 'assignment_files']
+        fields = ['id', 'group_id', 'admin', 'assignment_files', 'name', 'description']
+        read_only_fields = ['id', 'admin']
 
 
 class AssignmentFileSerializer(serializers.ModelSerializer):

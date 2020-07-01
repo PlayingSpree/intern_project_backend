@@ -16,8 +16,8 @@ class Group(models.Model):
     group_name = models.CharField(max_length=100)
     group_description = models.CharField(null=True, blank=True, max_length=250)
     user_joined = models.ManyToManyField(User, related_name='user_joined')
-    default_course = models.ForeignKey(Course, on_delete=models.CASCADE)
-    group_image = models.ImageField(null=True, upload_to=group_image_upload)
+    default_course = models.ManyToManyField(Course, blank=True)
+    group_image = models.ImageField(blank=True, null=True, upload_to=group_image_upload)
 
     class Meta:
         ordering = ['group_name']
