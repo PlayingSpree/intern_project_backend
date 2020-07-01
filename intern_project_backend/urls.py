@@ -28,6 +28,7 @@ schema_view = get_schema_view(
 
 urlpatterns = [
     path('group/', include('grouplearning.urls')),
+    path('sop/', include('sop.urls')),
     path('checkserver', index, name='index'),
     path('admin/', admin.site.urls),
     path('auth/', include('authapp.urls')),
