@@ -13,3 +13,5 @@ class GroupSerializer(serializers.ModelSerializer):
         model = Group
         fields = ['id', 'group_name', 'group_description', 'default_course', 'group_image', 'group_creator']
         read_only_fields = ['id', 'group_creator']
+
+
