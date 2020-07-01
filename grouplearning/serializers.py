@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from django.contrib.auth import get_user_model
 from djoser.serializers import UserSerializer
-from .models import Group
+from .models import Group, CommentGroup
 
 
 # create group
@@ -13,5 +13,14 @@ class GroupSerializer(serializers.ModelSerializer):
         model = Group
         fields = ['id', 'group_name', 'group_description', 'default_course', 'group_image', 'group_creator']
         read_only_fields = ['id', 'group_creator']
+
+
+class CommentGroupSerializer(serializers.ModelSerializer):
+    commentator = UserSerializer(source='user_id', read_only=True)
+
+    class Meta:
+        model = CommentGroup
+        fields = ['id', 'group_id', 'text', 'commentator']
+        read_only_fields = ['id', 'commentator']
 
 
