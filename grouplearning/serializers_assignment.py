@@ -32,17 +32,19 @@ class AssignmentWorkSerializer(serializers.ModelSerializer):
     work_files = serializers.SerializerMethodField(read_only=True)
 
     def get_work_files(self, obj):
-        serializer = AssignmentFileSerializer(AssignmentWorkFile.objects.filter(assignment_work_id=obj.id), many=True,
-                                              read_only=True)
+        serializer = AssignmentWorkFileSerializer(AssignmentWorkFile.objects.filter(assignment_work_id=obj.id),
+                                                  many=True,
+                                                  read_only=True)
         return serializer.data
 
     class Meta:
         model = AssignmentWork
-        fields = ['id', 'assignment_id', 'user', 'work_files', 'text']
+        fields = ['id', 'assignment_id', 'user', 'user_id', 'work_files', 'text']
         read_only_fields = ['id', 'work_files']
+        extra_kwargs = {'user_id': {'write_only': True}}
 
 
-class AssignmentFileSerializer(serializers.ModelSerializer):
+class AssignmentWorkFileSerializer(serializers.ModelSerializer):
     class Meta:
         model = AssignmentWorkFile
         fields = ['id', 'assignment_work_id', 'file']

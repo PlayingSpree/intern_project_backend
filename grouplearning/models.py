@@ -117,6 +117,9 @@ class AssignmentWork(models.Model):
     assignment_id = models.ForeignKey(Assignment, on_delete=models.CASCADE)
     text = models.TextField()
 
+    class Meta:
+        unique_together = ['user_id', 'assignment_id']
+
 
 def assignment_work_file_upload(instance, filename):
     return '/'.join(['uploads/assignment/work', str(instance.id), filename])
