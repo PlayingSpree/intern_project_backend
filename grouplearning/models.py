@@ -5,6 +5,7 @@ from django.db import models
 # Create your models here.
 from intern_project_backend import settings
 from authapp.models import User
+from sop.models import Course, Step
 
 
 def group_image_upload(instance, filename):
@@ -15,7 +16,7 @@ class Group(models.Model):
     group_name = models.CharField(max_length=100)
     group_description = models.CharField(null=True, blank=True, max_length=250)
     user_joined = models.ManyToManyField(User, related_name='user_joined')
-    # default_course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    default_course = models.ForeignKey(Course, on_delete=models.CASCADE)
     group_image = models.ImageField(null=True, upload_to=group_image_upload)
 
     class Meta:
@@ -40,7 +41,7 @@ class Group(models.Model):
 class CommentStep(models.Model):
     group_id = models.ForeignKey(Group, on_delete=models.CASCADE)
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
-    # step_id = models.ForeignKey(Step, on_delete=models.CASCADE)
+    step_id = models.ForeignKey(Step, on_delete=models.CASCADE)
     text = models.TextField()
 
 
