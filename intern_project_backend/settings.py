@@ -39,10 +39,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework.authtoken',
-    'authapp',
     'drf_yasg',
     'djoser',
     'corsheaders',
+    'authapp',
+    'grouplearning',
+    'sop'
 ]
 
 MIDDLEWARE = [
@@ -132,6 +134,8 @@ STATIC_URL = '/static/'
 
 
 # Extra library settings
+
+MEDIA_URL = '/media/' # Temp for file serving
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
