@@ -77,6 +77,7 @@ class CommentGroupFile(models.Model):
 
         super(CommentGroupFile, self).save(*args, **kwargs)
 
+
 class CommentGroupReply(models.Model):
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
     parent_id = models.ForeignKey(CommentGroup, on_delete=models.CASCADE)
@@ -85,7 +86,6 @@ class CommentGroupReply(models.Model):
 
 class Assignment(models.Model):
     group_id = models.ForeignKey(Group, on_delete=models.CASCADE)
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
     admin_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name='admin')
     name = models.CharField(max_length=64)
     description = models.TextField()
@@ -137,4 +137,3 @@ class AssignmentWorkFile(models.Model):
                 kwargs.pop('force_insert')
 
         super(AssignmentWorkFile, self).save(*args, **kwargs)
-

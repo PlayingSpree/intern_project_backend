@@ -9,7 +9,8 @@ class User(AbstractUser):
     REQUIRED_FIELDS = ['username', 'first_name', 'last_name']
     USERNAME_FIELD = 'email'
 
-    group_learning_is_creator = models.BooleanField(default=False)
+    # SOP data
+    sop_is_creator = models.BooleanField(default=False)
 
     def get_username(self):
         return self.email
