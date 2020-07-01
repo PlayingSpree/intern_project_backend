@@ -152,7 +152,7 @@ REST_FRAMEWORK = {
 AUTH_USER_MODEL = 'authapp.User'
 
 DJOSER = {
-    'LOGIN_FIELD': 'username',
+    'LOGIN_FIELD': 'email',
     'USER_CREATE_PASSWORD_RETYPE': False,
     'SERIALIZERS': {
         'user_create': 'authapp.serializers.UserCreateSerializer',
