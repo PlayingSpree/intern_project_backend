@@ -76,6 +76,7 @@ class CommentGroupFile(models.Model):
 
         super(CommentGroupFile, self).save(*args, **kwargs)
 
+
 class CommentGroupReply(models.Model):
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
     parent_id = models.ForeignKey(CommentGroup, on_delete=models.CASCADE)
@@ -136,4 +137,3 @@ class AssignmentWorkFile(models.Model):
                 kwargs.pop('force_insert')
 
         super(AssignmentWorkFile, self).save(*args, **kwargs)
-
