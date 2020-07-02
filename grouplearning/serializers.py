@@ -27,8 +27,8 @@ class CommentGroupSerializer(serializers.ModelSerializer):
     comment_group_files = serializers.SerializerMethodField(read_only=True)
 
     def get_comment_group_files(self, obj):
-        serializer = CommentGroupFileSerializer(CommentGroupFile.objects.filter(assignment_id=obj.id), many=True,
-                                              read_only=True)
+        serializer = CommentGroupFileSerializer(CommentGroupFile.objects.filter(comment_id=obj.id), many=True,
+                                                read_only=True)
         return serializer.data
 
     class Meta:
@@ -38,9 +38,12 @@ class CommentGroupSerializer(serializers.ModelSerializer):
 
 
 class CommentGroupReplySerializer(serializers.ModelSerializer):
+    user = UserSerializer(source='user_id', read_only=True)
+
     class Meta:
         model = CommentGroupReply
-        fields = ['id', 'user_id', 'parent_id']
+        fields = ['id', 'user', 'parent_id', 'text']
+        read_only_fields = ['id']
 
 
 class AddUserSerializer(serializers.ModelSerializer):

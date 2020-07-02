@@ -21,7 +21,7 @@ class AddUserViewSet(viewsets.ModelViewSet):
         user = Group.objects.create(
             id=serializer.validated_data['id'],
         )
-        if Group.objects.filter(group_id=serializer.validated_data['id']):
+        if Group.objects.filter(group_id=serializer.validated_data['id'].id):
             for user_joined in Group.objects.filter(id__in=serializer.validated_data['user_joined']):
                 user.user_joined.add(user_joined)
         else:
