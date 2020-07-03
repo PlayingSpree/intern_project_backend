@@ -1,10 +1,10 @@
 from rest_framework import viewsets, status
 from rest_framework.parsers import MultiPartParser
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
 
 from sop.models import Course
-from sop.permissions import IsCreatorUser, get_permissions_multi
+from sop.permissions import get_permissions_multi
 from sop.serializers import CourseSerializer
 
 
@@ -13,7 +13,7 @@ class CourseViewSet(viewsets.ModelViewSet):
     serializer_class = CourseSerializer
     permissions = [
         (['list', 'retrieve'], [IsAuthenticated]),
-        (['create', 'update', 'partial_update', 'destroy'], [IsCreatorUser])
+        (['create', 'update', 'partial_update', 'destroy'], [IsAdminUser])
     ]
     parser_classes = (MultiPartParser,)
 

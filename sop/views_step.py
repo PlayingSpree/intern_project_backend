@@ -3,7 +3,7 @@ from rest_framework.parsers import MultiPartParser
 from rest_framework.permissions import IsAuthenticated
 
 from sop.models import Step
-from sop.permissions import IsCreatorUser, get_permissions_multi
+from sop.permissions import IsAdminUser, get_permissions_multi
 from sop.serializers import StepSerializer
 
 
@@ -13,7 +13,7 @@ class StepViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin, mixins.Retri
     serializer_class = StepSerializer
     permissions = [
         (['retrieve', 'file'], [IsAuthenticated]),
-        (['create', 'update', 'partial_update', 'destroy'], [IsCreatorUser])
+        (['create', 'update', 'partial_update', 'destroy'], [IsAdminUser])
     ]
     parser_classes = (MultiPartParser,)
 
