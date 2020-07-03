@@ -74,4 +74,4 @@ class AssignmentWorkFileViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        return filter(assignment_work_id__user_id=user.id)
+        return AssignmentWorkFile.objects.filter(assignment_work_id__user_id=user.id)
