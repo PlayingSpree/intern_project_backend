@@ -10,7 +10,7 @@ from grouplearning.models import Group
 from grouplearning.serializers import AddUserSerializer
 
 
-class AddUserViewSet(viewsets.ModelViewSet):
+class AddUserViewSet(viewsets.GenericViewSet):
     queryset = Group.objects.all()
     serializer_class = AddUserSerializer
     permission_classes = [IsAuthenticated]
@@ -18,14 +18,12 @@ class AddUserViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         serializer = AddUserSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        user = Group.objects.create(
-            id=serializer.validated_data['id'],
-        )
-        if Group.objects.filter(id=serializer.validated_data['id'].id):
-            for user_joined in Group.objects.filter(id__in=serializer.validated_data['user_joined'].id):
-                user.user_joined.add(user_joined)
+        group = Group.objects.filter(id=serializer.validated_data['id'])
+        if group:
+            for user_joined in serializer.validated_data['user_joined']:
+                group[0].user_joined.add(user_joined)
         else:
             NotFound
 
-        headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED)

@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from django.contrib.auth import get_user_model
 from djoser.serializers import UserSerializer
-from .models import Group, CommentGroup, CommentGroupFile, CommentGroupReply
+from .models import Group, CommentGroup, CommentGroupFile, CommentGroupReply, CommentStep, CommentStepReply
 
 
 # create group
@@ -53,3 +53,22 @@ class AddUserSerializer(serializers.ModelSerializer):
         model = Group
         fields = ['id', 'user_joined']
         extra_kwargs = {'id': {'read_only': False}}
+
+
+class CommentStepSerializer(serializers.ModelSerializer):
+    commented_by = UserSerializer(source='user_id', read_only=True)
+
+    class Meta:
+        model = CommentStep
+        fields = ['id', 'group_id', 'step_id', 'text', 'commented_by']
+        read_only_fields = ['id', 'commented_by', 'step_id']
+
+
+class CommentStepReplySerializer(serializers.ModelSerializer):
+    user = UserSerializer(source='user_id', read_only=True)
+
+    class Meta:
+        model = CommentStepReply
+        fields = ['id', 'user', 'parent_id', 'text']
+        read_only_fields = ['id']
+

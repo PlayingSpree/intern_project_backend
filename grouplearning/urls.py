@@ -7,10 +7,10 @@ from grouplearning.views_comments import CommentGroupViewSet, CommentGroupFileVi
 from grouplearning.views_group import GroupViewSet
 
 router = routers.DefaultRouter()
-router.register('', GroupViewSet)
+router.register('comment/upload', CommentGroupFileViewSet)
 router.register('comment', CommentGroupViewSet)
 router.register('adduser', AddUserViewSet)
-router.register('comment/upload', CommentGroupFileViewSet)
+router.register('', GroupViewSet)
 urlpatterns = [
     path('', include(router.urls)),
 
