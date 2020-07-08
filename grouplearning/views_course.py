@@ -14,14 +14,13 @@ class GroupCourseViewSet(viewsets.GenericViewSet):
     serializer_class = GroupCourseSerializer
     permissions = [IsAuthenticated]
 
-    @action(detail=True)
-    def course(self, request, pk=None):
+    def retrieve(self, request, pk=None):
         group = get_object_or_404(Group.objects.filter(id=pk))
         serializer = CourseSerializer(group.courses, many=True)
         return Response(serializer.data)
 
-    @course.mapping.post
-    def course_add(self, request, pk=None, *args, **kwargs):
+    @action(detail=True)
+    def add(self, request, pk=None, *args, **kwargs):
         group = get_object_or_404(Group.objects.filter(id=pk))
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
