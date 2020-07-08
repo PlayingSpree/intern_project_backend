@@ -6,6 +6,7 @@ from grouplearning.views_assignment import AssignmentViewSet, AssignmentWorkView
     AssignmentFileViewSet
 from grouplearning.views_add_users import AddUserViewSet
 from grouplearning.views_comments import CommentGroupViewSet, CommentGroupFileViewSet, CommentGroupReplyViewSet
+from grouplearning.views_course import GroupCourseViewSet
 from grouplearning.views_get_member import GetMemberViewSet
 from grouplearning.views_group import GroupViewSet
 
@@ -19,7 +20,9 @@ router.register('comment/reply', CommentGroupReplyViewSet)
 router.register('comment', CommentGroupViewSet)
 router.register('getmember', GetMemberViewSet)
 router.register('adduser', AddUserViewSet)
+router.register('course', GroupCourseViewSet)
 router.register('', GroupViewSet)
+
 urlpatterns = [
     path('', include(router.urls)),
 
