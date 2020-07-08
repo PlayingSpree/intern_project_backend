@@ -3,7 +3,7 @@ from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from djoser.serializers import UserSerializer
 from .models import Group, CommentGroup, CommentGroupFile, CommentGroupReply, CommentStep, CommentStepReply
-
+User = get_user_model()
 
 # create group
 class GroupSerializer(serializers.ModelSerializer):
