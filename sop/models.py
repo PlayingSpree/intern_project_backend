@@ -38,10 +38,10 @@ def course_file_name(instance, filename):
 class Course(models.Model):
     name = models.CharField(max_length=64)
     description = models.TextField(null=True, blank=True)
-    cover = models.ImageField(null=True, upload_to=course_file_name)
+    cover = models.ImageField(null=True, blank=True, upload_to=course_file_name)
     publish = models.BooleanField(default=False)
     creator_id = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
-    posts = models.ManyToManyField(Post)
+    posts = models.ManyToManyField(Post, blank=True)
 
     def __str__(self):
         return '[Course id:{}] {}'.format(self.id, self.name)
