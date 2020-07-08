@@ -14,3 +14,4 @@ admin.site.register(Assignment)
 admin.site.register(AssignmentFile)
 admin.site.register(AssignmentWork)
 admin.site.register(AssignmentWorkFile)
+
