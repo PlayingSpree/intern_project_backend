@@ -27,7 +27,7 @@ uploads/
 *.bak 
 
 # If you are using PyCharm # 
-.idea/**
+.idea/
 *.iws /out/ 
 
 # Python # 
