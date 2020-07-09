@@ -11,7 +11,7 @@ def post_file_name(instance, filename):
 class Post(models.Model):
     name = models.CharField(max_length=64)
     description = models.TextField(null=True, blank=True)
-    cover = models.ImageField(null=True, upload_to=post_file_name)
+    cover = models.ImageField(null=True, blank=True, upload_to=post_file_name)
     publish = models.BooleanField(default=False)
     creator_id = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
 

@@ -20,6 +20,13 @@ class PostViewSet(viewsets.ModelViewSet):
     def get_permissions(self):
         return get_permissions_multi(self)
 
+    def get_queryset(self):
+        user = self.request.user
+        if user.is_staff:
+            return Post.objects.all()
+        else:
+            return Post.objects.filter(publish=True)
+
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
