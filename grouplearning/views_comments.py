@@ -16,6 +16,23 @@ class CommentGroupViewSet(viewsets.ModelViewSet):
         user = self.request.user
         return CommentGroup.objects.filter(group_id__user_joined=user.id)
 
+    def isingroup(self, request, group_id):
+        group = Group.objects.filter(id=group_id)
+        return group[0].user_joined.filter(id=request.user.id).exists()
+
+    def create(self, request):
+        request.data.user_id = request.user.id
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        # Check if user is in group
+        #.id again because it is foreignkey? need to get id from parent_id's table?
+        if not self.isingroup(request, serializer.validated_data['group_id'].id):
+            return Response({"detail": "User not in the group."}, status=status.HTTP_403_FORBIDDEN)
+        print(serializer.validated_data['user_id'])
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
 
 class CommentGroupFileViewSet(viewsets.ModelViewSet):
     queryset = CommentGroupFile.objects.all()
@@ -45,7 +62,7 @@ class CommentGroupReplyViewSet(viewsets.GenericViewSet):
 
         # Check if user is in group
         #.id again because it is foreignkey? need to get id from parent_id's table?
-        if self.isingroup(request, serializer.validated_data['parent_id'].id):
+        if not self.isingroup(request, serializer.validated_data['parent_id'].id):
             return Response({"detail": "User not in the group."}, status=status.HTTP_403_FORBIDDEN)
 
         serializer.save()
