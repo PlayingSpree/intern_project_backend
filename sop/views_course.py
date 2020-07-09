@@ -17,6 +17,13 @@ class CourseViewSet(viewsets.ModelViewSet):
     ]
     parser_classes = (MultiPartParser,)
 
+    def get_queryset(self):
+        user = self.request.user
+        if user.is_staff:
+            return Course.objects.all()
+        else:
+            return Course.objects.filter(publish=True)
+
     def get_permissions(self):
         return get_permissions_multi(self)
 
