@@ -14,6 +14,8 @@ class Post(models.Model):
     cover = models.ImageField(null=True, blank=True, upload_to=post_file_name)
     publish = models.BooleanField(default=False)
     creator_id = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_modified = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return '[Post id:{}] {}'.format(self.id, self.name)
@@ -42,6 +44,8 @@ class Course(models.Model):
     publish = models.BooleanField(default=False)
     creator_id = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     posts = models.ManyToManyField(Post, blank=True)
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_modified = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return '[Course id:{}] {}'.format(self.id, self.name)
@@ -83,6 +87,8 @@ class Step(models.Model):
                                      validators=[MaxValueValidator(2), MinValueValidator(0)])  # 0=None 1=Image 2=Video
     cover_file = models.FileField(null=True, upload_to=step_file_name)
     post_id = models.ForeignKey(Post, on_delete=models.CASCADE)
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_modified = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return '[Step id:{}] {}'.format(self.id, self.name)
