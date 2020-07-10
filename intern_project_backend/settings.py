@@ -156,7 +156,7 @@ DJOSER = {
     'USER_CREATE_PASSWORD_RETYPE': False,
     'SERIALIZERS': {
         'user_create': 'authapp.serializers.UserCreateSerializer',
-        'user': 'authapp.serializers.UserCreateSerializer',
+        'current_user': 'authapp.serializers.UserDataSerializer'
     },
 }
 

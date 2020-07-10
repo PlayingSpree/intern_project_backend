@@ -1,7 +1,6 @@
 from rest_framework import serializers
 
 from sop.models import Course
-from sop.serializers import CourseSerializer
 
 
 # create group

@@ -1,6 +1,6 @@
-from djoser.serializers import UserSerializer
 from rest_framework import serializers
 
+from authapp.serializers import UserDataSerializer
 from .models import Session, Step, StepFile, Course
 
 
@@ -26,7 +26,7 @@ class StepSerializer(serializers.ModelSerializer):
 
 
 class SessionSerializer(serializers.ModelSerializer):
-    creator = UserSerializer(source='creator_id', read_only=True)
+    creator = UserDataSerializer(source='creator_id', read_only=True)
     step = serializers.SerializerMethodField(read_only=True)
 
     def get_step(self, obj):
@@ -40,7 +40,7 @@ class SessionSerializer(serializers.ModelSerializer):
 
 
 class CourseSerializer(serializers.ModelSerializer):
-    creator = UserSerializer(source='creator_id', read_only=True)
+    creator = UserDataSerializer(source='creator_id', read_only=True)
 
     class Meta:
         model = Course
