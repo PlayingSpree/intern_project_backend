@@ -23,6 +23,12 @@ class AssignmentViewSet(viewsets.ModelViewSet):
         user = self.request.user
         return Assignment.objects.filter(group_id__user_joined=user.id)
 
+    def create(self, request):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(admin_id=request.user)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
 
 class AssignmentFileViewSet(viewsets.ModelViewSet):
     queryset = AssignmentFile.objects.all()
