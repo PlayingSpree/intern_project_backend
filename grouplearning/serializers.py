@@ -10,11 +10,15 @@ User = get_user_model()
 # create group
 class GroupSerializer(serializers.ModelSerializer):
     group_creator = UserSerializer(source='creator_id', read_only=True)
+    member_count = serializers.SerializerMethodField(read_only=True)
+
+    def get_member_count(self, obj):
+        return obj.user_joined.count()
 
     class Meta:
         model = Group
-        fields = ['id', 'group_name', 'group_description', 'courses', 'group_image', 'group_creator', 'date_created',
-                  'date_modified']
+        fields = ['id', 'group_name', 'group_description', 'member_count', 'courses', 'group_image', 'group_creator',
+                  'date_created', 'date_modified']
         read_only_fields = ['id', 'group_creator', 'date_created', 'date_modified']
 
 
