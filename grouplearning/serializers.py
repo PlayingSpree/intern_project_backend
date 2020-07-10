@@ -62,12 +62,12 @@ class AddUserSerializer(serializers.ModelSerializer):
 
 
 class CommentStepSerializer(serializers.ModelSerializer):
-    commented_by = UserSerializer(source='user_id', read_only=True)
 
     class Meta:
         model = CommentStep
-        fields = ['id', 'group_id', 'step_id', 'text', 'commented_by', 'date_created', 'date_modified']
-        read_only_fields = ['id', 'commented_by', 'step_id', 'date_created', 'date_modified']
+        fields = ['id', 'group_id', 'step_id', 'text', 'user_id', 'date_created', 'date_modified']
+        read_only_fields = ['id', 'step_id', 'date_created', 'date_modified']
+
 
 
 class CommentStepReplySerializer(serializers.ModelSerializer):
