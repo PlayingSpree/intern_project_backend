@@ -16,8 +16,9 @@ class AssignmentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Assignment
-        fields = ['id', 'group_id', 'admin', 'assignment_files', 'name', 'description']
-        read_only_fields = ['id', 'admin']
+        fields = ['id', 'group_id', 'admin', 'assignment_files', 'name', 'description', 'date_created', 'date_modified',
+                  'due_date']
+        read_only_fields = ['id', 'admin', 'date_created', 'date_modified']
 
 
 class AssignmentFileSerializer(serializers.ModelSerializer):
@@ -33,14 +34,13 @@ class AssignmentWorkSerializer(serializers.ModelSerializer):
 
     def get_work_files(self, obj):
         serializer = AssignmentWorkFileSerializer(AssignmentWorkFile.objects.filter(assignment_work_id=obj.id),
-                                                  many=True,
-                                                  read_only=True)
+                                                  many=True, read_only=True)
         return serializer.data
 
     class Meta:
         model = AssignmentWork
-        fields = ['id', 'assignment_id', 'user', 'user_id', 'work_files', 'text']
-        read_only_fields = ['id', 'work_files']
+        fields = ['id', 'assignment_id', 'user', 'user_id', 'work_files', 'text', 'date_created', 'date_modified']
+        read_only_fields = ['id', 'work_files', 'date_created', 'date_modified']
         extra_kwargs = {'user_id': {'write_only': True}}
 
 

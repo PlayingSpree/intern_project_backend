@@ -3,14 +3,14 @@ from rest_framework.parsers import MultiPartParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from sop.models import Post
+from sop.models import Session
 from sop.permissions import IsAdminUser, get_permissions_multi
-from sop.serializers import PostSerializer
+from sop.serializers import SessionSerializer
 
 
-class PostViewSet(viewsets.ModelViewSet):
-    queryset = Post.objects.all()
-    serializer_class = PostSerializer
+class SessionViewSet(viewsets.ModelViewSet):
+    queryset = Session.objects.all()
+    serializer_class = SessionSerializer
     permissions = [
         (['list', 'retrieve'], [IsAuthenticated]),
         (['create', 'update', 'partial_update', 'destroy'], [IsAdminUser])
@@ -23,9 +23,9 @@ class PostViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         user = self.request.user
         if user.is_staff:
-            return Post.objects.all()
+            return Session.objects.all()
         else:
-            return Post.objects.filter(publish=True)
+            return Session.objects.filter(publish=True)
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
