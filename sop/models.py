@@ -4,14 +4,14 @@ from authapp.models import User
 import os.path
 
 
-def post_file_name(instance, filename):
+def session_file_name(instance, filename):
     return '/'.join(['uploads/post/', str(instance.id), 'cover{0}'.format(os.path.splitext(filename)[1])])
 
 
-class Post(models.Model):
+class Session(models.Model):
     name = models.CharField(max_length=64)
     description = models.TextField(null=True, blank=True)
-    cover = models.ImageField(null=True, blank=True, upload_to=post_file_name)
+    cover = models.ImageField(null=True, blank=True, upload_to=session_file_name)
     publish = models.BooleanField(default=False)
     creator_id = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     date_created = models.DateTimeField(auto_now_add=True)
@@ -25,12 +25,12 @@ class Post(models.Model):
         if self.id is None:
             cover = self.cover
             self.cover = None
-            super(Post, self).save(*args, **kwargs)
+            super(Session, self).save(*args, **kwargs)
             self.cover = cover
             if 'force_insert' in kwargs:
                 kwargs.pop('force_insert')
 
-        super(Post, self).save(*args, **kwargs)
+        super(Session, self).save(*args, **kwargs)
 
 
 def course_file_name(instance, filename):
@@ -43,7 +43,7 @@ class Course(models.Model):
     cover = models.ImageField(null=True, blank=True, upload_to=course_file_name)
     publish = models.BooleanField(default=False)
     creator_id = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
-    posts = models.ManyToManyField(Post, blank=True)
+    posts = models.ManyToManyField(Session, blank=True)
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
 
@@ -86,7 +86,7 @@ class Step(models.Model):
     cover_type = models.IntegerField(default=0,
                                      validators=[MaxValueValidator(2), MinValueValidator(0)])  # 0=None 1=Image 2=Video
     cover_file = models.FileField(null=True, upload_to=step_file_name)
-    post_id = models.ForeignKey(Post, on_delete=models.CASCADE)
+    post_id = models.ForeignKey(Session, on_delete=models.CASCADE)
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
 
@@ -108,7 +108,7 @@ class Step(models.Model):
 
 class SopHistory(models.Model):
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
-    post_id = models.ForeignKey(Post, on_delete=models.CASCADE)
+    post_id = models.ForeignKey(Session, on_delete=models.CASCADE)
     datetime = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
