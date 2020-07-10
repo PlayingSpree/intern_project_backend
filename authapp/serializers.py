@@ -11,7 +11,7 @@ class UserCreateSerializer(UserCreateSerializer):
     class Meta:
         model = User
         fields = ('id', 'email', 'username', 'password', 'first_name', 'last_name', 'phone', 'image')
-         
+
     def validate(self, attrs):
         user = User(**attrs)
         password = attrs.get("password")
@@ -41,3 +41,9 @@ class UserCreateSerializer(UserCreateSerializer):
                 user.is_active = False
                 user.save(update_fields=["is_active"])
         return user
+
+
+class UserDataSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('id', 'email', 'username', 'first_name', 'last_name', 'phone', 'image', 'is_staff')

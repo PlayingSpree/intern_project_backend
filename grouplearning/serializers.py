@@ -1,7 +1,8 @@
 from rest_framework import serializers
 
 from django.contrib.auth import get_user_model
-from djoser.serializers import UserSerializer
+
+from authapp.serializers import UserDataSerializer
 from .models import Group, CommentGroup, CommentGroupFile, CommentGroupReply, CommentStep, CommentStepReply
 
 User = get_user_model()
@@ -9,7 +10,7 @@ User = get_user_model()
 
 # create group
 class GroupSerializer(serializers.ModelSerializer):
-    group_creator = UserSerializer(source='creator_id', read_only=True)
+    group_creator = UserDataSerializer(source='creator_id', read_only=True)
     member_count = serializers.SerializerMethodField(read_only=True)
 
     def get_member_count(self, obj):
@@ -44,7 +45,7 @@ class CommentGroupSerializer(serializers.ModelSerializer):
 
 
 class CommentGroupReplySerializer(serializers.ModelSerializer):
-    user = UserSerializer(source='user_id', read_only=True)
+    user = UserDataSerializer(source='user_id', read_only=True)
 
     class Meta:
         model = CommentGroupReply
@@ -71,7 +72,7 @@ class CommentStepSerializer(serializers.ModelSerializer):
 
 
 class CommentStepReplySerializer(serializers.ModelSerializer):
-    user = UserSerializer(source='user_id', read_only=True)
+    user = UserDataSerializer(source='user_id', read_only=True)
 
     class Meta:
         model = CommentStepReply

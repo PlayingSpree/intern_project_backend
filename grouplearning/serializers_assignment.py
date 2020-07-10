@@ -1,12 +1,13 @@
 from djoser.serializers import UserSerializer
 from rest_framework import serializers
 
+from authapp.serializers import UserDataSerializer
 from .models import Assignment, AssignmentFile, AssignmentWorkFile, AssignmentWork
 
 
 # create group
 class AssignmentSerializer(serializers.ModelSerializer):
-    admin = UserSerializer(source='admin_id', read_only=True)
+    admin = UserDataSerializer(source='admin_id', read_only=True)
     assignment_files = serializers.SerializerMethodField(read_only=True)
 
     def get_assignment_files(self, obj):
@@ -29,7 +30,7 @@ class AssignmentFileSerializer(serializers.ModelSerializer):
 
 
 class AssignmentWorkSerializer(serializers.ModelSerializer):
-    user = UserSerializer(source='user_id', read_only=True)
+    user = UserDataSerializer(source='user_id', read_only=True)
     work_files = serializers.SerializerMethodField(read_only=True)
 
     def get_work_files(self, obj):
