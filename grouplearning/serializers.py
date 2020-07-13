@@ -83,8 +83,9 @@ class CommentStepReplySerializer(serializers.ModelSerializer):
 class MemberPostSerializer(serializers.Serializer):
     new_user_joined_list = serializers.ListField(child=serializers.IntegerField())
 
-    def validate_new_course_id_list(self, value):
+    def validate_new_user_joined_list(self, value):
         for i in value:
+            print(i)
             if not User.objects.filter(pk=i).exists():
                 raise serializers.ValidationError("{0} is not a valid User id.".format(i))
         return value
