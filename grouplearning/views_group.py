@@ -6,9 +6,10 @@ from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 
 from authapp.serializers import UserDataSerializer
-from grouplearning.models import Group
+from grouplearning.models import Group, Assignment
 from grouplearning.permissions import get_permissions_multi
 from grouplearning.serializers import GroupSerializer, MemberPostSerializer
+from grouplearning.serializers_assignment import AssignmentSerializer
 from grouplearning.serializers_course import GroupCourseSerializer
 from sop.serializers import CourseSerializer
 
@@ -21,13 +22,13 @@ class GroupViewSet(viewsets.ModelViewSet):
         (['member'], UserDataSerializer),
         (['course'], CourseSerializer),
         (['member_post'], MemberPostSerializer),
-        (['course_post'], GroupCourseSerializer)
+        (['course_post'], GroupCourseSerializer),
+        (['assignment'], AssignmentSerializer)
     ]
     permissions = [
-        (['list', 'retrieve', 'member', 'course'], [IsAuthenticated]),
+        (['list', 'retrieve', 'member', 'course', 'assignment'], [IsAuthenticated]),
         (['create', 'update', 'partial_update', 'destroy', 'member_post', 'course_post'], [IsAdminUser])
     ]
-    parser_classes = (MultiPartParser, JSONParser)
 
     def get_serializer_class(self):
         for p in self.serializer_classes:
@@ -37,6 +38,11 @@ class GroupViewSet(viewsets.ModelViewSet):
 
     def get_permissions(self):
         return get_permissions_multi(self)
+
+    def isingroup(self, request, group):
+        if request.user.is_staff:
+            return True
+        return group.user_joined.filter(id=request.user.id).exists()
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -48,6 +54,10 @@ class GroupViewSet(viewsets.ModelViewSet):
     @action(detail=True)
     def member(self, request, pk=None):
         group = get_object_or_404(Group.objects.filter(id=pk))
+        # Check if user is in group
+        if not self.isingroup(request, group):
+            return Response({"detail": "User not in the group."}, status=status.HTTP_403_FORBIDDEN)
+
         serializer = UserDataSerializer(group.user_joined, many=True)
         return Response(serializer.data)
 
@@ -65,6 +75,9 @@ class GroupViewSet(viewsets.ModelViewSet):
     @action(detail=True)
     def course(self, request, pk=None):
         group = get_object_or_404(Group.objects.filter(id=pk))
+        # Check if user is in group
+        if self.isingroup(request, group):
+            return Response({"detail": "User not in the group."}, status=status.HTTP_403_FORBIDDEN)
         serializer = CourseSerializer(group.courses, many=True)
         return Response(serializer.data)
 
@@ -78,3 +91,12 @@ class GroupViewSet(viewsets.ModelViewSet):
         group.courses.add(*serializer.validated_data['new_course_id_list'])
 
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @action(detail=True)
+    def assignment(self, request, pk=None):
+        group = get_object_or_404(Group.objects.filter(id=pk))
+        # Check if user is in group
+        if not self.isingroup(request, group):
+            return Response({"detail": "User not in the group."}, status=status.HTTP_403_FORBIDDEN)
+        serializer = AssignmentSerializer(Assignment.objects.filter(group_id=pk), many=True)
+        return Response(serializer.data)
