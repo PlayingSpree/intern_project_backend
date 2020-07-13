@@ -78,3 +78,13 @@ class CommentStepReplySerializer(serializers.ModelSerializer):
         model = CommentStepReply
         fields = ['id', 'user', 'parent_id', 'text', 'date_created', 'date_modified']
         read_only_fields = ['id', 'date_created', 'date_modified']
+
+
+class MemberPostSerializer(serializers.Serializer):
+    new_user_joined_list = serializers.ListField(child=serializers.IntegerField())
+
+    def validate_new_course_id_list(self, value):
+        for i in value:
+            if not User.objects.filter(pk=i).exists():
+                raise serializers.ValidationError("{0} is not a valid User id.".format(i))
+        return value
