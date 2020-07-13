@@ -1,3 +1,5 @@
+import os
+
 from djoser.serializers import UserSerializer
 from rest_framework import serializers
 
@@ -9,16 +11,20 @@ from .models import Assignment, AssignmentFile, AssignmentWorkFile, AssignmentWo
 class AssignmentSerializer(serializers.ModelSerializer):
     admin = UserDataSerializer(source='admin_id', read_only=True)
     assignment_files = serializers.SerializerMethodField(read_only=True)
+    turn_in_count = serializers.SerializerMethodField(read_only=True)
 
     def get_assignment_files(self, obj):
         serializer = AssignmentFileSerializer(AssignmentFile.objects.filter(assignment_id=obj.id), many=True,
                                               read_only=True)
         return serializer.data
 
+    def get_turn_in_count(self, obj):
+        AssignmentWork.objects.filter(assignment_id=obj.pk).count()
+
     class Meta:
         model = Assignment
-        fields = ['id', 'group_id', 'admin', 'assignment_files', 'name', 'description', 'date_created', 'date_modified',
-                  'due_date']
+        fields = ['id', 'group_id', 'admin', 'assignment_files', 'name', 'description', 'turn_in_count', 'date_created',
+                  'date_modified', 'due_date']
         read_only_fields = ['id', 'admin', 'date_created', 'date_modified']
 
 
@@ -27,6 +33,16 @@ class AssignmentFileSerializer(serializers.ModelSerializer):
         model = AssignmentFile
         fields = ['id', 'assignment_id', 'file']
         read_only_fields = ['id']
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        file = {
+            "url": representation.pop("file"),
+            "size": instance.file.size,
+            "name": os.path.basename(instance.file.name),
+        }
+        representation['file'] = file
+        return representation
 
 
 class AssignmentWorkSerializer(serializers.ModelSerializer):
