@@ -80,12 +80,15 @@ class CommentStepReplySerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'date_created', 'date_modified']
 
 
+def valid_user_and_not_admin(user_id):
+    user = User.objects.filter(pk=user_id)
+    if not user.exists():
+        raise serializers.ValidationError("{0} is not a valid User id.".format(user_id))
+    return not user[0].is_staff
+
+
 class MemberPostSerializer(serializers.Serializer):
     new_user_joined_list = serializers.ListField(child=serializers.IntegerField())
 
     def validate_new_user_joined_list(self, value):
-        for i in value:
-            print(i)
-            if not User.objects.filter(pk=i).exists():
-                raise serializers.ValidationError("{0} is not a valid User id.".format(i))
-        return value
+        return [x for x in value if valid_user_and_not_admin(x)]
