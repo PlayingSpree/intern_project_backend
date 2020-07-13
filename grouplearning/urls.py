@@ -4,7 +4,6 @@ from rest_framework import routers
 
 from grouplearning.views_assignment import AssignmentViewSet, AssignmentWorkViewSet, AssignmentWorkFileViewSet, \
     AssignmentFileViewSet
-from grouplearning.views_add_users import AddUserViewSet
 from grouplearning.views_comments import CommentGroupViewSet, CommentGroupFileViewSet, CommentGroupReplyViewSet
 from grouplearning.views_course import GroupCourseViewSet
 from grouplearning.views_group import GroupViewSet
