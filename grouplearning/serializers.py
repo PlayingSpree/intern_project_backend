@@ -1,18 +1,26 @@
 from rest_framework import serializers
 
 from django.contrib.auth import get_user_model
-from djoser.serializers import UserSerializer
+
+from authapp.serializers import UserDataSerializer
 from .models import Group, CommentGroup, CommentGroupFile, CommentGroupReply, CommentStep, CommentStepReply
+
 User = get_user_model()
+
 
 # create group
 class GroupSerializer(serializers.ModelSerializer):
-    group_creator = UserSerializer(source='creator_id', read_only=True)
+    group_creator = UserDataSerializer(source='creator_id', read_only=True)
+    member_count = serializers.SerializerMethodField(read_only=True)
+
+    def get_member_count(self, obj):
+        return obj.user_joined.count()
 
     class Meta:
         model = Group
-        fields = ['id', 'group_name', 'group_description', 'courses', 'group_image', 'group_creator']
-        read_only_fields = ['id', 'group_creator']
+        fields = ['id', 'group_name', 'group_description', 'member_count', 'courses', 'group_image', 'group_creator',
+                  'date_created', 'date_modified']
+        read_only_fields = ['id', 'group_creator', 'date_created', 'date_modified']
 
 
 class CommentGroupFileSerializer(serializers.ModelSerializer):
@@ -32,17 +40,17 @@ class CommentGroupSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CommentGroup
-        fields = ['id', 'group_id', 'text', 'comment_group_files', 'user_id']
-        read_only_fields = ['id']
+        fields = ['id', 'group_id', 'text', 'comment_group_files', 'user_id', 'date_created', 'date_modified']
+        read_only_fields = ['id', 'date_created', 'date_modified']
 
 
 class CommentGroupReplySerializer(serializers.ModelSerializer):
-    user = UserSerializer(source='user_id', read_only=True)
+    user = UserDataSerializer(source='user_id', read_only=True)
 
     class Meta:
         model = CommentGroupReply
-        fields = ['id', 'user', 'parent_id', 'text']
-        read_only_fields = ['id']
+        fields = ['id', 'user', 'parent_id', 'text', 'date_created', 'date_modified']
+        read_only_fields = ['id', 'date_created', 'date_modified']
 
 
 class AddUserSerializer(serializers.ModelSerializer):
@@ -55,19 +63,32 @@ class AddUserSerializer(serializers.ModelSerializer):
 
 
 class CommentStepSerializer(serializers.ModelSerializer):
-    commented_by = UserSerializer(source='user_id', read_only=True)
 
     class Meta:
         model = CommentStep
-        fields = ['id', 'group_id', 'step_id', 'text', 'commented_by']
-        read_only_fields = ['id', 'commented_by', 'step_id']
+        fields = ['id', 'group_id', 'step_id', 'text', 'user_id', 'date_created', 'date_modified']
+        read_only_fields = ['id', 'date_created', 'date_modified']
+
 
 
 class CommentStepReplySerializer(serializers.ModelSerializer):
-    user = UserSerializer(source='user_id', read_only=True)
+    user = UserDataSerializer(source='user_id', read_only=True)
 
     class Meta:
         model = CommentStepReply
-        fields = ['id', 'user', 'parent_id', 'text']
-        read_only_fields = ['id']
+        fields = ['id', 'user', 'parent_id', 'text', 'date_created', 'date_modified']
+        read_only_fields = ['id', 'date_created', 'date_modified']
 
+
+def valid_user_and_not_admin(user_id):
+    user = User.objects.filter(pk=user_id)
+    if not user.exists():
+        raise serializers.ValidationError("{0} is not a valid User id.".format(user_id))
+    return not user[0].is_staff
+
+
+class MemberPostSerializer(serializers.Serializer):
+    new_user_joined_list = serializers.ListField(child=serializers.IntegerField())
+
+    def validate_new_user_joined_list(self, value):
+        return [x for x in value if valid_user_and_not_admin(x)]

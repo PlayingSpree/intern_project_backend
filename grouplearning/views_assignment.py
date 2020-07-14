@@ -23,6 +23,12 @@ class AssignmentViewSet(viewsets.ModelViewSet):
         user = self.request.user
         return Assignment.objects.filter(group_id__user_joined=user.id)
 
+    def create(self, request):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(admin_id=request.user)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
 
 class AssignmentFileViewSet(viewsets.ModelViewSet):
     queryset = AssignmentFile.objects.all()
@@ -58,13 +64,6 @@ class AssignmentWorkViewSet(viewsets.GenericViewSet):
 
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-    def destroy(self, request, pk=None):
-        instance = self.get_object()
-        if self.isingroup(request, instance.assignment_id.id):
-            return Response({"detail": "User not in the group."}, status=status.HTTP_403_FORBIDDEN)
-        instance.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class AssignmentWorkFileViewSet(viewsets.ModelViewSet):

@@ -19,6 +19,8 @@ class Group(models.Model):
     courses = models.ManyToManyField(Course, blank=True)
     group_image = models.ImageField(blank=True, null=True, upload_to=group_image_upload)
     creator_id = models.ForeignKey(User, on_delete=models.CASCADE)
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_modified = models.DateTimeField(auto_now=True)
 
     class Meta:
         ordering = ['group_name']
@@ -44,18 +46,24 @@ class CommentStep(models.Model):
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
     step_id = models.ForeignKey(Step, on_delete=models.CASCADE)
     text = models.TextField()
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_modified = models.DateTimeField(auto_now=True)
 
 
 class CommentStepReply(models.Model):
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
     parent_id = models.ForeignKey(CommentStep, on_delete=models.CASCADE)
     text = models.TextField()
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_modified = models.DateTimeField(auto_now=True)
 
 
 class CommentGroup(models.Model):
     group_id = models.ForeignKey(Group, on_delete=models.CASCADE)
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
     text = models.TextField()
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_modified = models.DateTimeField(auto_now=True)
 
 
 def comment_group_file_upload(instance, filename):
@@ -83,13 +91,18 @@ class CommentGroupReply(models.Model):
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
     parent_id = models.ForeignKey(CommentGroup, on_delete=models.CASCADE)
     text = models.TextField()
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_modified = models.DateTimeField(auto_now=True)
 
 
 class Assignment(models.Model):
     group_id = models.ForeignKey(Group, on_delete=models.CASCADE)
     admin_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name='admin')
     name = models.CharField(max_length=64)
-    description = models.TextField()
+    description = models.TextField(null=True,blank=True)
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_modified = models.DateTimeField(auto_now=True)
+    due_date = models.DateTimeField()
 
 
 def assignment_file_upload(instance, filename):
@@ -116,7 +129,9 @@ class AssignmentFile(models.Model):
 class AssignmentWork(models.Model):
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
     assignment_id = models.ForeignKey(Assignment, on_delete=models.CASCADE)
-    text = models.TextField()
+    text = models.TextField(null=True, blank=True)
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_modified = models.DateTimeField(auto_now=True)
 
     class Meta:
         unique_together = ['user_id', 'assignment_id']

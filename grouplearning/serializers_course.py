@@ -1,10 +1,10 @@
 from rest_framework import serializers
 
+from grouplearning.models import Group
 from sop.models import Course
-from sop.serializers import CourseSerializer
 
 
-# create group
+# create group course
 class GroupCourseSerializer(serializers.Serializer):
     new_course_id_list = serializers.ListField(child=serializers.IntegerField())
 
