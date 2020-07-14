@@ -1,3 +1,5 @@
+import os
+
 from rest_framework import serializers
 
 from authapp.serializers import UserDataSerializer
@@ -9,6 +11,16 @@ class StepFileSerializer(serializers.ModelSerializer):
         model = StepFile
         fields = ['id', 'step_id', 'file']
         read_only_fields = ['id']
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        file = {
+            "url": representation.pop("file"),
+            "size": instance.file.size,
+            "name": os.path.basename(instance.file.name),
+        }
+        representation['file'] = file
+        return representation
 
 
 class StepSerializer(serializers.ModelSerializer):

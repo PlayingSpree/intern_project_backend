@@ -99,7 +99,7 @@ class Assignment(models.Model):
     group_id = models.ForeignKey(Group, on_delete=models.CASCADE)
     admin_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name='admin')
     name = models.CharField(max_length=64)
-    description = models.TextField()
+    description = models.TextField(null=True,blank=True)
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     due_date = models.DateTimeField()
@@ -129,7 +129,7 @@ class AssignmentFile(models.Model):
 class AssignmentWork(models.Model):
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
     assignment_id = models.ForeignKey(Assignment, on_delete=models.CASCADE)
-    text = models.TextField()
+    text = models.TextField(null=True, blank=True)
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
 

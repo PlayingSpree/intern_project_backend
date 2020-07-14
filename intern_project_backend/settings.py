@@ -15,7 +15,6 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
@@ -26,7 +25,6 @@ SECRET_KEY = '8r55a=e@r8hhln*=ja-nx7#^wr2rzy2dgz+ky^fohnqnh%e6og'
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -82,7 +80,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'intern_project_backend.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
@@ -92,7 +89,6 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
@@ -112,7 +108,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
 
@@ -126,16 +121,14 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
 
-
 # Extra library settings
 
-MEDIA_URL = '/media/' # Temp for file serving
+MEDIA_URL = '/media/'  # Temp for file serving
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -156,16 +149,17 @@ DJOSER = {
     'USER_CREATE_PASSWORD_RETYPE': False,
     'SERIALIZERS': {
         'user_create': 'authapp.serializers.UserCreateSerializer',
-        'current_user': 'authapp.serializers.UserDataSerializer'
+        'current_user': 'authapp.serializers.UserDataSerializer',
+        'user': 'authapp.serializers.UserDataSerializer'
     },
 }
 
 SWAGGER_SETTINGS = {
-  'SECURITY_DEFINITIONS': {
-     'DRF Token': {
-           'type': 'apiKey',
-           'name': 'Authorization',
-           'in': 'header'
-     }
-  }
+    'SECURITY_DEFINITIONS': {
+        'DRF Token': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header'
+        }
+    }
 }

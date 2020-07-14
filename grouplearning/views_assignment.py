@@ -65,13 +65,6 @@ class AssignmentWorkViewSet(viewsets.GenericViewSet):
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    def destroy(self, request, pk=None):
-        instance = self.get_object()
-        if self.isingroup(request, instance.assignment_id.id):
-            return Response({"detail": "User not in the group."}, status=status.HTTP_403_FORBIDDEN)
-        instance.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
 
 class AssignmentWorkFileViewSet(viewsets.ModelViewSet):
     queryset = AssignmentWorkFile.objects.all()
