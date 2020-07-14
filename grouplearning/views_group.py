@@ -6,9 +6,10 @@ from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 
 from authapp.serializers import UserDataSerializer
-from grouplearning.models import Group, Assignment
+from grouplearning.models import Group, Assignment, CommentGroup, CommentStep
 from grouplearning.permissions import get_permissions_multi
-from grouplearning.serializers import GroupSerializer, MemberPostSerializer
+from grouplearning.serializers import GroupSerializer, MemberPostSerializer, CommentGroupSerializer, \
+    CommentStepSerializer
 from grouplearning.serializers_assignment import AssignmentSerializer
 from grouplearning.serializers_course import GroupCourseSerializer
 from sop.serializers import CourseSerializer
@@ -23,10 +24,12 @@ class GroupViewSet(viewsets.ModelViewSet):
         (['course'], CourseSerializer),
         (['member_post'], MemberPostSerializer),
         (['course_post'], GroupCourseSerializer),
-        (['assignment'], AssignmentSerializer)
+        (['assignment'], AssignmentSerializer),
+        (['comment_group'], CommentGroupSerializer),
+        (['comment_step'], CommentStepSerializer)
     ]
     permissions = [
-        (['list', 'retrieve', 'member', 'course', 'assignment'], [IsAuthenticated]),
+        (['list', 'retrieve', 'member', 'course', 'assignment', 'comment_group', 'comment_step'], [IsAuthenticated]),
         (['create', 'update', 'partial_update', 'destroy', 'member_post', 'course_post'], [IsAdminUser])
     ]
 
@@ -99,4 +102,22 @@ class GroupViewSet(viewsets.ModelViewSet):
         if not self.isingroup(request, group):
             return Response({"detail": "User not in the group."}, status=status.HTTP_403_FORBIDDEN)
         serializer = AssignmentSerializer(Assignment.objects.filter(group_id=pk), many=True)
+        return Response(serializer.data)
+
+    @action(detail=True)
+    def comment_group(self, request, pk=None):
+        group = get_object_or_404(Group.objects.filter(id=pk))
+        # Check if user is in group
+        if not self.isingroup(request, group):
+            return Response({"detail": "User not in the group."}, status=status.HTTP_403_FORBIDDEN)
+        serializer = CommentGroupSerializer(CommentGroup.objects.filter(group_id=pk), many=True)
+        return Response(serializer.data)
+
+    @action(detail=True)
+    def comment_step(self, request, pk=None):
+        group = get_object_or_404(Group.objects.filter(id=pk))
+        # Check if user is in group
+        if not self.isingroup(request, group):
+            return Response({"detail": "User not in the group."}, status=status.HTTP_403_FORBIDDEN)
+        serializer = CommentStepSerializer(CommentStep.objects.filter(group_id=pk), many=True)
         return Response(serializer.data)

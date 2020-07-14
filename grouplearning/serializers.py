@@ -67,7 +67,7 @@ class CommentStepSerializer(serializers.ModelSerializer):
     class Meta:
         model = CommentStep
         fields = ['id', 'group_id', 'step_id', 'text', 'user_id', 'date_created', 'date_modified']
-        read_only_fields = ['id', 'step_id', 'date_created', 'date_modified']
+        read_only_fields = ['id', 'date_created', 'date_modified']
 
 
 
