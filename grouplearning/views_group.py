@@ -26,10 +26,12 @@ class GroupViewSet(viewsets.ModelViewSet):
         (['course_post'], GroupCourseSerializer),
         (['assignment'], AssignmentSerializer),
         (['comment_group'], CommentGroupSerializer),
-        (['comment_step'], CommentStepSerializer)
+        (['comment_step'], CommentStepSerializer),
+        (['comment_group_reply'], CommentGroupReplySerializer),
+        (['comment_step_reply'], CommentStepReplySerializer),
     ]
     permissions = [
-        (['list', 'retrieve', 'member', 'course', 'assignment', 'comment_group', 'comment_step'], [IsAuthenticated]),
+        (['list', 'retrieve', 'member', 'course', 'assignment', 'comment_group', 'comment_step', 'comment_group_reply', 'comment_step_reply'], [IsAuthenticated]),
         (['create', 'update', 'partial_update', 'destroy', 'member_post', 'course_post'], [IsAdminUser])
     ]
 
