@@ -24,7 +24,11 @@ class CommentGroupViewSet(viewsets.ModelViewSet):
         return group[0].user_joined.filter(id=request.user.id).exists()
 
     def create(self, request):
-        request.data.user_id = request.user.id
+        # Locked User
+        request.data._mutable = True
+        request.data['user_id'] = request.user.id
+        request.data._mutable = False
+
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 

@@ -103,6 +103,7 @@ class Assignment(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     due_date = models.DateTimeField()
+    allow_file = models.BooleanField(default=False)
 
 
 def assignment_file_upload(instance, filename):
