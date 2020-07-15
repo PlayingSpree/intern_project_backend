@@ -15,7 +15,6 @@ class SessionViewSet(viewsets.ModelViewSet):
         (['list', 'retrieve'], [IsAuthenticated]),
         (['create', 'update', 'partial_update', 'destroy'], [IsAdminUser])
     ]
-    parser_classes = (MultiPartParser,)
 
     def get_permissions(self):
         return get_permissions_multi(self)
