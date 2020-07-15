@@ -6,10 +6,10 @@ from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 
 from authapp.serializers import UserDataSerializer
-from grouplearning.models import Group, Assignment, CommentGroup, CommentStep
+from grouplearning.models import Group, Assignment, CommentGroup, CommentStep, CommentGroupReply, CommentStepReply
 from grouplearning.permissions import get_permissions_multi
 from grouplearning.serializers import GroupSerializer, MemberPostSerializer, CommentGroupSerializer, \
-    CommentStepSerializer
+    CommentStepSerializer, CommentGroupReplySerializer, CommentStepReplySerializer
 from grouplearning.serializers_assignment import AssignmentSerializer
 from grouplearning.serializers_course import GroupCourseSerializer
 from sop.serializers import CourseSerializer
@@ -114,10 +114,30 @@ class GroupViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     @action(detail=True)
+    def comment_group_reply(self, request, pk=None):
+        comment_group = get_object_or_404(CommentGroup.objects.filter(id=pk))
+        group = Group.objects.filter(id=comment_group.group_id.id)
+        # Check if user is in group
+        if not self.isingroup(request, group):
+            return Response({"detail": "User not in the group."}, status=status.HTTP_403_FORBIDDEN)
+        serializer = CommentGroupReplySerializer(CommentGroupReply.objects.filter(parent_id=pk), many=True)
+        return Response(serializer.data)
+
+    @action(detail=True)
     def comment_step(self, request, pk=None):
         group = get_object_or_404(Group.objects.filter(id=pk))
         # Check if user is in group
         if not self.isingroup(request, group):
             return Response({"detail": "User not in the group."}, status=status.HTTP_403_FORBIDDEN)
         serializer = CommentStepSerializer(CommentStep.objects.filter(group_id=pk), many=True)
+        return Response(serializer.data)
+
+    @action(detail=True)
+    def comment_step_reply(self, request, pk=None):
+        comment_step = get_object_or_404(CommentStep.objects.filter(id=pk))
+        group = Group.objects.filter(id=comment_step.group_id.id)
+        # Check if user is in group
+        if not self.isingroup(request, group):
+            return Response({"detail": "User not in the group."}, status=status.HTTP_403_FORBIDDEN)
+        serializer = CommentStepReplySerializer(CommentStepReply.objects.filter(parent_id=pk), many=True)
         return Response(serializer.data)
