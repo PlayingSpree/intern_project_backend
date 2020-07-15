@@ -1,5 +1,7 @@
+from django.contrib.auth import get_user_model
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+from rest_framework import request
 from authapp.models import User
 import os.path
 
@@ -115,5 +117,6 @@ class SopHistory(models.Model):
         return '[SopHistory id:{}] User id [{}] read post id [{}] at {}'.format(self.id, self.user_id, self.post_id,
                                                                                 self.datetime)
 
-    class Meta:
-        unique_together = ['user_id', 'post_id']
+    @staticmethod
+    def push(user_id,post_id):
+        return SopHistory.objects.create(user_id=user_id, post_id=post_id).save()

@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from authapp.serializers import UserDataSerializer
-from .models import Session, Step, StepFile, Course
+from .models import Session, Step, StepFile, Course, SopHistory
 
 
 class StepFileSerializer(serializers.ModelSerializer):
@@ -46,3 +46,12 @@ class CourseSerializer(serializers.ModelSerializer):
         model = Course
         fields = ['id', 'name', 'description', 'cover', 'publish', 'creator', 'posts', 'date_created', 'date_modified']
         read_only_fields = ['id', 'creator', 'date_created', 'date_modified']
+
+
+class SopHistorySerializer(serializers.ModelSerializer):
+    user = UserDataSerializer(source='user_id', read_only=True)
+    post = StepSerializer(source='post_id', read_only=True)
+
+    class Meta:
+        model = SopHistory
+        fields = ['user', 'post','datetime']
