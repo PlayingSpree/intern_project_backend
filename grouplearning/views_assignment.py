@@ -52,10 +52,13 @@ class AssignmentWorkViewSet(viewsets.GenericViewSet):
         return group[0].user_joined.filter(id=request.user.id).exists()
 
     def create(self, request):
-        # Locked user
-        request.data._mutable = True
-        request.data['user_id'] = request.user.id
-        request.data._mutable = False
+        # Locked User
+        if 'multipart/form-data' in request.content_type:
+            request.data._mutable = True
+            request.data['user_id'] = request.user.id
+            request.data._mutable = False
+        else:
+            request.data['user_id'] = request.user.id
 
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -82,7 +85,8 @@ class AssignmentWorkFileViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         # Check if owner
         if serializer.validated_data['assignment_work_id'].user_id == request.user:
-            return Response({"detail": "Request user is not owner of this assignment_work."}, status=status.HTTP_403_FORBIDDEN)
+            return Response({"detail": "Request user is not owner of this assignment_work."},
+                            status=status.HTTP_403_FORBIDDEN)
         # Check is assignment allow files
         if not serializer.validated_data['assignment_work_id'].assignment_id.allow_file:
             return Response({"detail": "No flies upload allowed in this assignment."}, status=status.HTTP_403_FORBIDDEN)
