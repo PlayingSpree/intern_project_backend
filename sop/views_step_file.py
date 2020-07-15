@@ -15,7 +15,6 @@ class StepFileViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin, mixins.R
         (['retrieve'], [IsAuthenticated]),
         (['create', 'destroy'], [IsAdminUser])
     ]
-    parser_classes = (MultiPartParser,)
 
     def get_permissions(self):
         return get_permissions_multi(self)

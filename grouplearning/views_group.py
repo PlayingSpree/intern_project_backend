@@ -47,6 +47,15 @@ class GroupViewSet(viewsets.ModelViewSet):
             return True
         return group.user_joined.filter(id=request.user.id).exists()
 
+    def list(self, request, *args, **kwargs):
+        if request.user.is_staff:
+            queryset = self.get_queryset()
+        else:
+            queryset = Group.objects.filter(user_joined=request.user)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)

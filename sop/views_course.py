@@ -15,7 +15,6 @@ class CourseViewSet(viewsets.ModelViewSet):
         (['list', 'retrieve'], [IsAuthenticated]),
         (['create', 'update', 'partial_update', 'destroy'], [IsAdminUser])
     ]
-    parser_classes = (MultiPartParser,)
 
     def get_queryset(self):
         user = self.request.user
