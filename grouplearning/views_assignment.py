@@ -21,6 +21,8 @@ class AssignmentViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
+        if user.is_staff:
+            return Assignment.objects.all()
         return Assignment.objects.filter(group_id__user_joined=user.id)
 
     def create(self, request):
