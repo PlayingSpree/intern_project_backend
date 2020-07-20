@@ -53,6 +53,16 @@ class CommentGroupFileWithDateSerializer(serializers.ModelSerializer):
         fields = ['id', 'comment_id', 'file', 'date_modified']
         read_only_fields = ['id']
 
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        file = {
+            "url": representation.pop("file"),
+            "size": instance.file.size,
+            "name": os.path.basename(instance.file.name),
+        }
+        representation['file'] = file
+        return representation
+
 
 class CommentGroupSerializer(serializers.ModelSerializer):
     comment_group_files = serializers.SerializerMethodField(read_only=True)
