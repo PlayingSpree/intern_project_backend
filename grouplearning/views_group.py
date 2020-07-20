@@ -7,10 +7,11 @@ from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 
 from authapp.serializers import UserDataSerializer
-from grouplearning.models import Group, Assignment, CommentGroup, CommentStep, CommentGroupReply, CommentStepReply
+from grouplearning.models import Group, Assignment, CommentGroup, CommentStep, CommentGroupReply, CommentStepReply, \
+    CommentGroupFile
 from grouplearning.permissions import get_permissions_multi
 from grouplearning.serializers import GroupSerializer, MemberPostSerializer, CommentGroupSerializer, \
-    CommentStepSerializer, CommentGroupReplySerializer, CommentStepReplySerializer
+    CommentStepSerializer, CommentGroupReplySerializer, CommentStepReplySerializer, CommentGroupFileSerializer
 from grouplearning.serializers_assignment import AssignmentSerializer
 from grouplearning.serializers_course import GroupCourseSerializer
 from sop.serializers import CourseSerializer
@@ -30,10 +31,11 @@ class GroupViewSet(viewsets.ModelViewSet):
         (['comment_step'], CommentStepSerializer),
         (['comment_group_reply'], CommentGroupReplySerializer),
         (['comment_step_reply'], CommentStepReplySerializer),
+        (['attachment'], CommentStepReplySerializer),
     ]
     permissions = [
         (['list', 'retrieve', 'member', 'course', 'assignment', 'comment_group', 'comment_step', 'comment_group_reply',
-          'comment_step_reply'], [IsAuthenticated]),
+          'comment_step_reply', 'attachment'], [IsAuthenticated]),
         (['create', 'update', 'partial_update', 'destroy', 'member_post', 'course_post'], [IsAdminUser])
     ]
 
@@ -79,7 +81,7 @@ class GroupViewSet(viewsets.ModelViewSet):
         for param in allow_params:
             query = self.request.query_params.get(param, None)
             if query is not None:
-                queryset = queryset.filter(**{param+'__icontains': query})
+                queryset = queryset.filter(**{param + '__icontains': query})
         # search name
         query = self.request.query_params.get('name', None)
         if query is not None:
@@ -164,4 +166,13 @@ class GroupViewSet(viewsets.ModelViewSet):
         if not self.isingroup(request, group):
             return Response({"detail": "User not in the group."}, status=status.HTTP_403_FORBIDDEN)
         serializer = CommentStepReplySerializer(CommentStepReply.objects.filter(parent_id=pk), many=True)
+        return Response(serializer.data)
+
+    @action(detail=True)
+    def attachment(self, request, pk=None):
+        group = Group.objects.filter(id=pk)
+        # Check if user is in group
+        if not self.isingroup(request, group):
+            return Response({"detail": "User not in the group."}, status=status.HTTP_403_FORBIDDEN)
+        serializer = CommentGroupFileSerializer(CommentGroupFile.objects.filter(comment_id__group_id=pk), many=True)
         return Response(serializer.data)
