@@ -1,3 +1,4 @@
+from django.db.models import Q
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
@@ -31,7 +32,8 @@ class GroupViewSet(viewsets.ModelViewSet):
         (['comment_step_reply'], CommentStepReplySerializer),
     ]
     permissions = [
-        (['list', 'retrieve', 'member', 'course', 'assignment', 'comment_group', 'comment_step', 'comment_group_reply', 'comment_step_reply'], [IsAuthenticated]),
+        (['list', 'retrieve', 'member', 'course', 'assignment', 'comment_group', 'comment_step', 'comment_group_reply',
+          'comment_step_reply'], [IsAuthenticated]),
         (['create', 'update', 'partial_update', 'destroy', 'member_post', 'course_post'], [IsAdminUser])
     ]
 
@@ -71,8 +73,19 @@ class GroupViewSet(viewsets.ModelViewSet):
         # Check if user is in group
         if not self.isingroup(request, group):
             return Response({"detail": "User not in the group."}, status=status.HTTP_403_FORBIDDEN)
+        # query_params
+        queryset = group.user_joined
+        allow_params = ['username', 'email']
+        for param in allow_params:
+            query = self.request.query_params.get(param, None)
+            if query is not None:
+                queryset = queryset.filter(**{param+'__icontains': query})
+        # search name
+        query = self.request.query_params.get('name', None)
+        if query is not None:
+            queryset = queryset.filter(Q(first_name__icontains=query) | Q(first_name__icontains=query))
 
-        serializer = UserDataSerializer(group.user_joined, many=True)
+        serializer = UserDataSerializer(queryset, many=True)
         return Response(serializer.data)
 
     @member.mapping.post
