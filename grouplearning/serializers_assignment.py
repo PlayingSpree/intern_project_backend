@@ -18,7 +18,7 @@ class GroupAssignmentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Group
-        fields = ['id', 'member_count']
+        fields = ['id', 'member_count', 'group_name']
         read_only_fields = ['id']
 
 
