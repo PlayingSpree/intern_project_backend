@@ -11,7 +11,8 @@ from grouplearning.models import Group, Assignment, CommentGroup, CommentStep, C
     CommentGroupFile
 from grouplearning.permissions import get_permissions_multi
 from grouplearning.serializers import GroupSerializer, MemberPostSerializer, CommentGroupSerializer, \
-    CommentStepSerializer, CommentGroupReplySerializer, CommentStepReplySerializer, CommentGroupFileSerializer
+    CommentStepSerializer, CommentGroupReplySerializer, CommentStepReplySerializer, CommentGroupFileSerializer, \
+    CommentGroupFileWithDateSerializer
 from grouplearning.serializers_assignment import AssignmentSerializer
 from grouplearning.serializers_course import GroupCourseSerializer
 from sop.serializers import CourseSerializer
@@ -31,7 +32,7 @@ class GroupViewSet(viewsets.ModelViewSet):
         (['comment_step'], CommentStepSerializer),
         (['comment_group_reply'], CommentGroupReplySerializer),
         (['comment_step_reply'], CommentStepReplySerializer),
-        (['attachment'], CommentStepReplySerializer),
+        (['attachment'], CommentGroupFileWithDateSerializer),
     ]
     permissions = [
         (['list', 'retrieve', 'member', 'course', 'assignment', 'comment_group', 'comment_step', 'comment_group_reply',
@@ -174,5 +175,5 @@ class GroupViewSet(viewsets.ModelViewSet):
         # Check if user is in group
         if not self.isingroup(request, group):
             return Response({"detail": "User not in the group."}, status=status.HTTP_403_FORBIDDEN)
-        serializer = CommentGroupFileSerializer(CommentGroupFile.objects.filter(comment_id__group_id=pk), many=True)
+        serializer = CommentGroupFileWithDateSerializer(CommentGroupFile.objects.filter(comment_id__group_id=pk), many=True)
         return Response(serializer.data)

@@ -42,6 +42,18 @@ class CommentGroupFileSerializer(serializers.ModelSerializer):
         return representation
 
 
+class CommentGroupFileWithDateSerializer(serializers.ModelSerializer):
+    date_modified = serializers.SerializerMethodField(read_only=True)
+
+    def get_date_modified(self, obj):
+        return CommentGroup.objects.filter(pk=obj.comment_id.id)[0].date_modified
+
+    class Meta:
+        model = CommentGroupFile
+        fields = ['id', 'comment_id', 'file', 'date_modified']
+        read_only_fields = ['id']
+
+
 class CommentGroupSerializer(serializers.ModelSerializer):
     comment_group_files = serializers.SerializerMethodField(read_only=True)
 
