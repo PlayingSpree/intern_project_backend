@@ -31,15 +31,15 @@ class CommentGroupFileSerializer(serializers.ModelSerializer):
         fields = ['id', 'comment_id', 'file']
         read_only_fields = ['id']
 
-        def to_representation(self, instance):
-            representation = super().to_representation(instance)
-            file = {
-                "url": representation.pop("file"),
-                "size": instance.file.size,
-                "name": os.path.basename(instance.file.name),
-            }
-            representation['file'] = file
-            return representation
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        file = {
+            "url": representation.pop("file"),
+            "size": instance.file.size,
+            "name": os.path.basename(instance.file.name),
+        }
+        representation['file'] = file
+        return representation
 
 
 class CommentGroupSerializer(serializers.ModelSerializer):
