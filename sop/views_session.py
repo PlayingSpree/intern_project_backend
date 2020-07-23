@@ -1,4 +1,5 @@
 from rest_framework import viewsets, status
+from rest_framework.filters import SearchFilter
 from rest_framework.parsers import MultiPartParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -15,6 +16,8 @@ class SessionViewSet(viewsets.ModelViewSet):
         (['list', 'retrieve'], [IsAuthenticated]),
         (['create', 'update', 'partial_update', 'destroy'], [IsAdminUser])
     ]
+    filter_backends = [SearchFilter]
+    search_fields = ['name']
 
     def get_permissions(self):
         return get_permissions_multi(self)
