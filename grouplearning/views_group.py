@@ -1,5 +1,5 @@
 from django.db.models import Q
-from rest_framework import viewsets, status
+from rest_framework import viewsets, status, filters
 from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
 from rest_framework.parsers import MultiPartParser, JSONParser
@@ -10,6 +10,7 @@ from authapp.serializers import UserDataSerializer
 from grouplearning.models import Group, Assignment, CommentGroup, CommentStep, CommentGroupReply, CommentStepReply, \
     CommentGroupFile
 from grouplearning.permissions import get_permissions_multi
+from grouplearning.search import MultiSearchFilter
 from grouplearning.serializers import GroupSerializer, MemberPostSerializer, CommentGroupSerializer, \
     CommentStepSerializer, CommentGroupReplySerializer, CommentStepReplySerializer, CommentGroupFileSerializer, \
     CommentGroupFileWithDateSerializer
@@ -39,6 +40,10 @@ class GroupViewSet(viewsets.ModelViewSet):
           'comment_step_reply', 'attachment'], [IsAuthenticated]),
         (['create', 'update', 'partial_update', 'destroy', 'member_post', 'course_post'], [IsAdminUser])
     ]
+    filter_backends = [MultiSearchFilter]
+    search_fields = [(['list'], ['group_name']),
+                     (['course'], ['name']),
+                     (['assignment'], ['name'])]
 
     def get_serializer_class(self):
         for p in self.serializer_classes:
@@ -59,7 +64,7 @@ class GroupViewSet(viewsets.ModelViewSet):
             queryset = self.get_queryset()
         else:
             queryset = Group.objects.filter(user_joined=request.user)
-
+        queryset = self.filter_queryset(queryset)
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
@@ -106,9 +111,9 @@ class GroupViewSet(viewsets.ModelViewSet):
     def course(self, request, pk=None):
         group = get_object_or_404(Group.objects.filter(id=pk))
         # Check if user is in group
-        if self.isingroup(request, group):
+        if not self.isingroup(request, group):
             return Response({"detail": "User not in the group."}, status=status.HTTP_403_FORBIDDEN)
-        serializer = CourseSerializer(group.courses, many=True)
+        serializer = CourseSerializer(self.filter_queryset(group.courses), many=True)
         return Response(serializer.data)
 
     @course.mapping.post
@@ -128,7 +133,7 @@ class GroupViewSet(viewsets.ModelViewSet):
         # Check if user is in group
         if not self.isingroup(request, group):
             return Response({"detail": "User not in the group."}, status=status.HTTP_403_FORBIDDEN)
-        serializer = AssignmentSerializer(Assignment.objects.filter(group_id=pk), many=True)
+        serializer = AssignmentSerializer(self.filter_queryset(Assignment.objects.filter(group_id=pk)), many=True)
         return Response(serializer.data)
 
     @action(detail=True)
@@ -175,5 +180,6 @@ class GroupViewSet(viewsets.ModelViewSet):
         # Check if user is in group
         if not self.isingroup(request, group):
             return Response({"detail": "User not in the group."}, status=status.HTTP_403_FORBIDDEN)
-        serializer = CommentGroupFileWithDateSerializer(CommentGroupFile.objects.filter(comment_id__group_id=pk), many=True)
+        serializer = CommentGroupFileWithDateSerializer(CommentGroupFile.objects.filter(comment_id__group_id=pk),
+                                                        many=True)
         return Response(serializer.data)
