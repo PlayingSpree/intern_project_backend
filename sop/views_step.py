@@ -2,10 +2,10 @@ from rest_framework import viewsets, mixins
 from rest_framework.parsers import MultiPartParser
 from rest_framework.permissions import IsAuthenticated
 
-from sop.models import Step
+from sop.models import Step ,SopHistory , Session
 from sop.permissions import IsAdminUser, get_permissions_multi
 from sop.serializers import StepSerializer
-
+from rest_framework.response import Response
 
 class StepViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin, mixins.RetrieveModelMixin, mixins.UpdateModelMixin,
                   mixins.DestroyModelMixin):
@@ -19,3 +19,9 @@ class StepViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin, mixins.Retri
 
     def get_permissions(self):
         return get_permissions_multi(self)
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        SopHistory.push(request.user, instance.post_id, instance)
+        return Response(serializer.data)

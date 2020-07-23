@@ -112,11 +112,13 @@ class SopHistory(models.Model):
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
     post_id = models.ForeignKey(Session, on_delete=models.CASCADE)
     datetime = models.DateTimeField(auto_now_add=True)
+    step_id = models.ForeignKey(Step, default=Step.objects.none(), on_delete=models.CASCADE)
 
     def __str__(self):
-        return '[SopHistory id:{}] User id [{}] read post id [{}] at {}'.format(self.id, self.user_id, self.post_id,
+        return '[SopHistory id:{}] User id [{}] read post id [{}] read step id [{}] at {}'.format(self.id, self.user_id, self.post_id, self.step_id,
                                                                                 self.datetime)
 
     @staticmethod
-    def push(user_id,post_id):
-        return SopHistory.objects.create(user_id=user_id, post_id=post_id).save()
+    def push(user_id,post_id,step_id):
+        return SopHistory.objects.create(user_id=user_id, post_id=post_id, step_id=step_id).save()
+

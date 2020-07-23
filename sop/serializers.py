@@ -49,9 +49,8 @@ class CourseSerializer(serializers.ModelSerializer):
 
 
 class SopHistorySerializer(serializers.ModelSerializer):
-    user = UserDataSerializer(source='user_id', read_only=True)
-    post = StepSerializer(source='post_id', read_only=True)
-
+    # user = UserDataSerializer(source='user_id', read_only=True)
     class Meta:
         model = SopHistory
-        fields = ['user', 'post','datetime']
+        fields = ['user_id', 'post_id', 'step_id', 'datetime']
+        # read_only_fields = ['user_id', 'post_id', 'step_id', 'datetime']
