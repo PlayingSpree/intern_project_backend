@@ -24,23 +24,13 @@ class CommentGroupViewSet(viewsets.ModelViewSet):
         return group[0].user_joined.filter(id=request.user.id).exists()
 
     def create(self, request):
-        # Locked User
-        if 'multipart/form-data' in request.content_type:
-            request.data._mutable = True
-            request.data['user_id'] = request.user.id
-            request.data._mutable = False
-        else:
-            request.data['user_id'] = request.user.id
-
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
         # Check if user is in group
-        # .id again because it is foreignkey? need to get id from parent_id's table?
         if not self.isingroup(request, serializer.validated_data['group_id'].id):
             return Response({"detail": "User not in the group."}, status=status.HTTP_403_FORBIDDEN)
-        print(serializer.validated_data['user_id'])
-        serializer.save()
+        serializer.save(user_id=request.user)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
@@ -71,7 +61,6 @@ class CommentGroupReplyViewSet(viewsets.GenericViewSet):
         serializer.is_valid(raise_exception=True)
 
         # Check if user is in group
-        # .id again because it is foreignkey? need to get id from parent_id's table?
         if not self.isingroup(request, serializer.validated_data['parent_id'].id):
             return Response({"detail": "User not in the group."}, status=status.HTTP_403_FORBIDDEN)
 
@@ -106,11 +95,9 @@ class CommentStepViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
 
         # Check if user is in group
-        # .id again because it is foreignkey? need to get id from parent_id's table?
         if not self.isingroup(request, serializer.validated_data['group_id'].id):
             return Response({"detail": "User not in the group."}, status=status.HTTP_403_FORBIDDEN)
-        print(serializer.validated_data['user_id'])
-        serializer.save()
+        serializer.save(user_id=request.user)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
@@ -134,7 +121,6 @@ class CommentStepReplyViewSet(viewsets.GenericViewSet):
         serializer.is_valid(raise_exception=True)
 
         # Check if user is in group
-        # .id again because it is foreignkey? need to get id from parent_id's table?
         if not self.isingroup(request, serializer.validated_data['parent_id'].id):
             return Response({"detail": "User not in the group."}, status=status.HTTP_403_FORBIDDEN)
 

@@ -66,6 +66,7 @@ class CommentGroupFileWithDateSerializer(serializers.ModelSerializer):
 
 class CommentGroupSerializer(serializers.ModelSerializer):
     comment_group_files = serializers.SerializerMethodField(read_only=True)
+    user = UserDataSerializer(source='user_id', read_only=True)
 
     def get_comment_group_files(self, obj):
         serializer = CommentGroupFileSerializer(CommentGroupFile.objects.filter(comment_id=obj.id), many=True,
@@ -74,7 +75,7 @@ class CommentGroupSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CommentGroup
-        fields = ['id', 'group_id', 'text', 'comment_group_files', 'user_id', 'date_created', 'date_modified']
+        fields = ['id', 'group_id', 'text', 'comment_group_files', 'user', 'date_created', 'date_modified']
         read_only_fields = ['id', 'date_created', 'date_modified']
 
 
@@ -97,12 +98,12 @@ class AddUserSerializer(serializers.ModelSerializer):
 
 
 class CommentStepSerializer(serializers.ModelSerializer):
+    user = UserDataSerializer(source='user_id', read_only=True)
 
     class Meta:
         model = CommentStep
-        fields = ['id', 'group_id', 'step_id', 'text', 'user_id', 'date_created', 'date_modified']
+        fields = ['id', 'group_id', 'step_id', 'text', 'user', 'date_created', 'date_modified']
         read_only_fields = ['id', 'date_created', 'date_modified']
-
 
 
 class CommentStepReplySerializer(serializers.ModelSerializer):
