@@ -6,6 +6,7 @@ from rest_framework.parsers import MultiPartParser, JSONParser
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 
+from authapp.models import User
 from authapp.serializers import UserDataSerializer
 from grouplearning.models import Group, Assignment, CommentGroup, CommentStep, CommentGroupReply, CommentStepReply, \
     CommentGroupFile
@@ -82,16 +83,7 @@ class GroupViewSet(viewsets.ModelViewSet):
         if not self.isingroup(request, group):
             return Response({"detail": "User not in the group."}, status=status.HTTP_403_FORBIDDEN)
         # query_params
-        queryset = group.user_joined
-        allow_params = ['username', 'email']
-        for param in allow_params:
-            query = self.request.query_params.get(param, None)
-            if query is not None:
-                queryset = queryset.filter(**{param + '__icontains': query})
-        # search name
-        query = self.request.query_params.get('name', None)
-        if query is not None:
-            queryset = queryset.filter(Q(first_name__icontains=query) | Q(first_name__icontains=query))
+        queryset = group.user_joined.all()
 
         serializer = UserDataSerializer(queryset, many=True)
         return Response(serializer.data)
@@ -167,7 +159,7 @@ class GroupViewSet(viewsets.ModelViewSet):
     @action(detail=True)
     def comment_step_reply(self, request, pk=None):
         comment_step = get_object_or_404(CommentStep.objects.filter(id=pk))
-        group = Group.objects.filter(id=comment_step.group_id.id)
+        group = get_object_or_404(Group.objects.filter(id=comment_step.group_id.id))
         # Check if user is in group
         if not self.isingroup(request, group):
             return Response({"detail": "User not in the group."}, status=status.HTTP_403_FORBIDDEN)
