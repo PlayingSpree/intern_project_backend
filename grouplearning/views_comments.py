@@ -110,10 +110,11 @@ class CommentStepReplyViewSet(viewsets.GenericViewSet):
         user = self.request.user
         return CommentStepReply.objects.filter(user_id=user.id)
 
-    def isingroup(self, request, group_id):
+    def isingroup(self, request, parent_id):
         if request.user.is_staff:
             return True
-        group = Group.objects.filter(id=group_id)
+        comment_group = CommentStep.objects.filter(id=parent_id)
+        group = Group.objects.filter(id=comment_group[0].group_id.id)
         return group[0].user_joined.filter(id=request.user.id).exists()
 
     def create(self, request):
