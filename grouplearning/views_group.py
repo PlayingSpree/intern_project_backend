@@ -148,7 +148,7 @@ class GroupViewSet(viewsets.ModelViewSet):
     @action(detail=True)
     def comment_group_reply(self, request, pk=None):
         comment_group = get_object_or_404(CommentGroup.objects.filter(id=pk))
-        group = Group.objects.filter(id=comment_group.group_id.id)
+        group = get_object_or_404(Group.objects.filter(id=comment_group.group_id.id))
         # Check if user is in group
         if not self.isingroup(request, group):
             return Response({"detail": "User not in the group."}, status=status.HTTP_403_FORBIDDEN)
