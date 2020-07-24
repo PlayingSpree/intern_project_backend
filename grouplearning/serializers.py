@@ -70,7 +70,7 @@ class CommentGroupSerializer(serializers.ModelSerializer):
 
     def get_comment_group_files(self, obj):
         serializer = CommentGroupFileSerializer(CommentGroupFile.objects.filter(comment_id=obj.id), many=True,
-                                                read_only=True)
+                                                read_only=True, context={"request": self.context.get('request')})
         return serializer.data
 
     class Meta:
