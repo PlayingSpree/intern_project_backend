@@ -176,7 +176,7 @@ class GroupViewSet(viewsets.ModelViewSet):
 
     @action(detail=True)
     def attachment(self, request, pk=None):
-        group = Group.objects.filter(id=pk)
+        group = get_object_or_404(Group.objects.filter(id=pk))
         # Check if user is in group
         if not self.isingroup(request, group):
             return Response({"detail": "User not in the group."}, status=status.HTTP_403_FORBIDDEN)
