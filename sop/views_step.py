@@ -19,9 +19,3 @@ class StepViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin, mixins.Retri
 
     def get_permissions(self):
         return get_permissions_multi(self)
-
-    def retrieve(self, request, *args, **kwargs):
-        instance = self.get_object()
-        serializer = self.get_serializer(instance)
-        SopHistory.push(request.user, instance.post_id, instance)
-        return Response(serializer.data)

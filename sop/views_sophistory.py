@@ -27,8 +27,6 @@ class SopHistoryViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
             serializer = self.get_serializer(page, many=True)
             return self.get_paginated_response(serializer.data)
         serializer = self.get_serializer(queryset, many=True)
-        # print(self.filter_queryset(self.get_queryset()).filter(post_id=serializer.validated_data['post_id']).count())
-        # print(SopHistory.objects.filter(post_id=serializer.validated_data['post_id']))
         return Response(serializer.data)
-    # post_id = serializer.validated_data['post_id']
+
 
