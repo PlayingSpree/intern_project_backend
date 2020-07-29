@@ -53,5 +53,5 @@ class SopHistorySerializer(serializers.ModelSerializer):
     post = SessionSerializer(source='post_id', read_only=True)
     class Meta:
         model = SopHistory
-        fields = ['user_id', 'post', 'datetime']
+        fields = ['user', 'post', 'datetime']
         # read_only_fields = ['user_id', 'post_id', 'step_id', 'datetime']

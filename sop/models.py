@@ -112,7 +112,6 @@ class SopHistory(models.Model):
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
     post_id = models.ForeignKey(Session, on_delete=models.CASCADE)
     datetime = models.DateTimeField(auto_now_add=True)
-    # course_id = models.ForeignKey(Course, default=Course.objects.none(), on_delete=models.CASCADE)
 
     def __str__(self):
         return '[SopHistory id:{}] User id [{}] read post id [{}] at {}'.format(self.id, self.user_id, self.post_id,
@@ -123,8 +122,5 @@ class SopHistory(models.Model):
 
     @staticmethod
     def push(user_id,post_id):
-        # for post in SopHistory.objects.all().count():
-        #     if post != post_id:
-        # print(SopHistory.objects.filter(post_id))
         return SopHistory.objects.create(user_id=user_id, post_id=post_id).save()
 
