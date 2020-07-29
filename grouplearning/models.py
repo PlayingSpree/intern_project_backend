@@ -48,6 +48,9 @@ class CommentStep(models.Model):
     text = models.TextField()
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        ordering = ['-date_modified']
 
 
 class CommentStepReply(models.Model):
@@ -64,6 +67,9 @@ class CommentGroup(models.Model):
     text = models.TextField()
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-date_modified']
 
 
 def comment_group_file_upload(instance, filename):
@@ -99,7 +105,7 @@ class Assignment(models.Model):
     group_id = models.ForeignKey(Group, on_delete=models.CASCADE)
     admin_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name='admin')
     name = models.CharField(max_length=64)
-    description = models.TextField(null=True,blank=True)
+    description = models.TextField(null=True, blank=True)
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     due_date = models.DateTimeField()

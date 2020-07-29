@@ -11,7 +11,7 @@ from authapp.serializers import UserDataSerializer
 from grouplearning.models import Group, Assignment, CommentGroup, CommentStep, CommentGroupReply, CommentStepReply, \
     CommentGroupFile
 from grouplearning.permissions import get_permissions_multi
-from grouplearning.search import MultiSearchFilter
+from grouplearning.filter import MultiSearchFilter
 from grouplearning.serializers import GroupSerializer, MemberPostSerializer, CommentGroupSerializer, \
     CommentStepSerializer, CommentGroupReplySerializer, CommentStepReplySerializer, CommentGroupFileSerializer, \
     CommentGroupFileWithDateSerializer
