@@ -73,7 +73,7 @@ class CommentGroupReplyViewSet(viewsets.GenericViewSet):
 
     def destroy(self, request, pk=None):
         instance = self.get_object()
-        if self.isingroup(request, instance.parent_id.id):
+        if not self.isingroup(request, instance.parent_id.id):
             return Response({"detail": "User not in the group."}, status=status.HTTP_403_FORBIDDEN)
         instance.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -134,7 +134,7 @@ class CommentStepReplyViewSet(viewsets.GenericViewSet):
 
     def destroy(self, request, pk=None):
         instance = self.get_object()
-        if self.isingroup(request, instance.parent_id.id):
+        if not self.isingroup(request, instance.parent_id.id):
             return Response({"detail": "User not in the group."}, status=status.HTTP_403_FORBIDDEN)
         instance.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
