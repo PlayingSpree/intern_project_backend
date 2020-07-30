@@ -48,9 +48,9 @@ class CommentGroupReplyViewSet(viewsets.GenericViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
+        user = self.request.user
         if user.is_staff:
             return CommentGroup.objects.all()
-        user = self.request.user
         return CommentGroupReply.objects.filter(user_id=user.id)
 
     def isingroup(self, request, parent_id):
