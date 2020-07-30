@@ -78,14 +78,19 @@ class GroupViewSet(viewsets.ModelViewSet):
 
     @action(detail=True)
     def member(self, request, pk=None):
+        """
+        Can use /?idonly to return only the user_id of member.
+        """
         group = get_object_or_404(Group.objects.filter(id=pk))
         # Check if user is in group
         if not self.isingroup(request, group):
             return Response({"detail": "User not in the group."}, status=status.HTTP_403_FORBIDDEN)
         # query_params
         queryset = group.user_joined.all()
-
-        serializer = UserDataSerializer(queryset, many=True, context={'request': request})
+        if self.request.query_params.get('idonly', None) is None:
+            serializer = UserDataSerializer(queryset, many=True, context={'request': request})
+        else:
+            return Response(list(queryset.values_list("id", flat=True)))
         return Response(serializer.data)
 
     @member.mapping.post
