@@ -42,7 +42,8 @@ class SessionSerializer(serializers.ModelSerializer):
     step = serializers.SerializerMethodField(read_only=True)
 
     def get_step(self, obj):
-        serializer = StepSerializer(Step.objects.filter(post_id=obj.id), many=True, read_only=True)
+        serializer = StepSerializer(Step.objects.filter(post_id=obj.id), many=True, read_only=True,
+                                    context={"request": self.context.get('request')})
         return serializer.data
 
     class Meta:

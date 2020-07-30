@@ -15,6 +15,8 @@ class CommentGroupViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
+        if user.is_staff:
+            return CommentGroup.objects.all()
         return CommentGroup.objects.filter(group_id__user_joined=user.id)
 
     def isingroup(self, request, group_id):
@@ -46,6 +48,8 @@ class CommentGroupReplyViewSet(viewsets.GenericViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
+        if user.is_staff:
+            return CommentGroup.objects.all()
         user = self.request.user
         return CommentGroupReply.objects.filter(user_id=user.id)
 
