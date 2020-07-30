@@ -85,8 +85,9 @@ class AssignmentWorkFileViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+
         # Check if owner
-        if serializer.validated_data['assignment_work_id'].user_id == request.user:
+        if not serializer.validated_data['assignment_work_id'].user_id == request.user:
             return Response({"detail": "Request user is not owner of this assignment_work."},
                             status=status.HTTP_403_FORBIDDEN)
         # Check is assignment allow files
