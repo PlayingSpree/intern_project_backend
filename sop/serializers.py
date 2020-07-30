@@ -66,6 +66,8 @@ class CourseSerializer(serializers.ModelSerializer):
     progress = serializers.SerializerMethodField(read_only=True)
 
     def get_progress(self, obj):
+        if(obj.posts.count()):
+            return 0
         return round(SopHistory.objects.filter(post_id__course=obj).count() / obj.posts.count() * 100, 2)
 
     class Meta:
