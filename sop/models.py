@@ -1,7 +1,7 @@
 import os.path
 
 from django.core.validators import MaxValueValidator, MinValueValidator
-from django.db import models
+from django.db import models, IntegrityError
 
 from authapp.models import User
 
@@ -117,9 +117,12 @@ class SopHistory(models.Model):
         return '[SopHistory id:{}] User id [{}] read post id [{}] at {}'.format(self.id, self.user_id, self.post_id,
                                                                                 self.datetime)
 
-    # class Meta:
-    #     unique_together = ('user_id', 'post_id',)
+    class Meta:
+        unique_together = ('user_id', 'post_id',)
 
     @staticmethod
     def push(user_id, post_id):
-        return SopHistory.objects.create(user_id=user_id, post_id=post_id).save()
+        try:
+            SopHistory.objects.create(user_id=user_id, post_id=post_id).save()
+        except IntegrityError:
+            pass

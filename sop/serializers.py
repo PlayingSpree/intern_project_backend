@@ -52,6 +52,15 @@ class SessionSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'creator', 'step', 'date_created', 'date_modified']
 
 
+class SessionWithNoStepSerializer(serializers.ModelSerializer):
+    creator = UserDataSerializer(source='creator_id', read_only=True)
+
+    class Meta:
+        model = Session
+        fields = ['id', 'name', 'description', 'cover', 'publish', 'creator', 'date_created', 'date_modified']
+        read_only_fields = ['id', 'creator', 'date_created', 'date_modified']
+
+
 class CourseSerializer(serializers.ModelSerializer):
     creator = UserDataSerializer(source='creator_id', read_only=True)
 
@@ -62,10 +71,8 @@ class CourseSerializer(serializers.ModelSerializer):
 
 
 class SopHistorySerializer(serializers.ModelSerializer):
-    user = UserDataSerializer(source='user_id', read_only=True)
-    post = SessionSerializer(source='post_id', read_only=True)
+    session = SessionWithNoStepSerializer(source='post_id', read_only=True)
 
     class Meta:
         model = SopHistory
-        fields = ['user', 'post', 'datetime']
-        # read_only_fields = ['user_id', 'post_id', 'step_id', 'datetime']
+        fields = ['session', 'datetime']
