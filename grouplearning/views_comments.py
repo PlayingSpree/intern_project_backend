@@ -1,6 +1,5 @@
 from rest_framework import viewsets, status
-from rest_framework.parsers import MultiPartParser
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from grouplearning.models import CommentGroup, CommentGroupFile, CommentGroupReply, Group, CommentStep, CommentStepReply

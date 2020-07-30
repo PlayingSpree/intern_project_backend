@@ -1,5 +1,4 @@
-from rest_framework import permissions
-from rest_framework.permissions import BasePermission, IsAdminUser
+from rest_framework.permissions import IsAdminUser
 
 
 def get_permissions_multi(self):

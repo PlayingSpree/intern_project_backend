@@ -1,20 +1,16 @@
-from django.db.models import Q
-from rest_framework import viewsets, status, filters
+from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
-from rest_framework.parsers import MultiPartParser, JSONParser
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 
-from authapp.models import User
 from authapp.serializers import UserDataSerializer
+from grouplearning.filter import MultiSearchFilter
 from grouplearning.models import Group, Assignment, CommentGroup, CommentStep, CommentGroupReply, CommentStepReply, \
     CommentGroupFile
 from grouplearning.permissions import get_permissions_multi
-from grouplearning.filter import MultiSearchFilter
 from grouplearning.serializers import GroupSerializer, MemberPostSerializer, CommentGroupSerializer, \
-    CommentStepSerializer, CommentGroupReplySerializer, CommentStepReplySerializer, CommentGroupFileSerializer, \
-    CommentGroupFileWithDateSerializer
+    CommentStepSerializer, CommentGroupReplySerializer, CommentStepReplySerializer, CommentGroupFileWithDateSerializer
 from grouplearning.serializers_assignment import AssignmentSerializer
 from grouplearning.serializers_course import GroupCourseSerializer
 from sop.serializers import CourseSerializer

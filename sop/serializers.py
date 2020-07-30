@@ -64,6 +64,7 @@ class CourseSerializer(serializers.ModelSerializer):
 class SopHistorySerializer(serializers.ModelSerializer):
     user = UserDataSerializer(source='user_id', read_only=True)
     post = SessionSerializer(source='post_id', read_only=True)
+
     class Meta:
         model = SopHistory
         fields = ['user', 'post', 'datetime']

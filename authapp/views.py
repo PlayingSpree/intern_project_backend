@@ -21,9 +21,9 @@ class UserViewSet(viewsets.ModelViewSet):
 
     def permission_denied(self, request, message=None):
         if (
-            settings.HIDE_USERS
-            and request.user.is_authenticated
-            and self.action in ["update", "partial_update", "list", "retrieve"]
+                settings.HIDE_USERS
+                and request.user.is_authenticated
+                and self.action in ["update", "partial_update", "list", "retrieve"]
         ):
             raise NotFound()
         super().permission_denied(request, message=message)
@@ -57,7 +57,7 @@ class UserViewSet(viewsets.ModelViewSet):
         elif self.action == "reset_username_confirm":
             self.permission_classes = settings.PERMISSIONS.username_reset_confirm
         elif self.action == "destroy" or (
-            self.action == "me" and self.request and self.request.method == "DELETE"
+                self.action == "me" and self.request and self.request.method == "DELETE"
         ):
             self.permission_classes = settings.PERMISSIONS.user_delete
         return super().get_permissions()
@@ -68,7 +68,7 @@ class UserViewSet(viewsets.ModelViewSet):
                 return settings.SERIALIZERS.user_create_password_retype
             return settings.SERIALIZERS.user_create
         elif self.action == "destroy" or (
-            self.action == "me" and self.request and self.request.method == "DELETE"
+                self.action == "me" and self.request and self.request.method == "DELETE"
         ):
             return settings.SERIALIZERS.user_delete
         elif self.action == "activation":

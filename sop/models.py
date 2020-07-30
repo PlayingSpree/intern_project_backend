@@ -1,9 +1,9 @@
-from django.contrib.auth import get_user_model
+import os.path
+
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-from rest_framework import request
+
 from authapp.models import User
-import os.path
 
 
 def session_file_name(instance, filename):
@@ -121,6 +121,5 @@ class SopHistory(models.Model):
     #     unique_together = ('user_id', 'post_id',)
 
     @staticmethod
-    def push(user_id,post_id):
+    def push(user_id, post_id):
         return SopHistory.objects.create(user_id=user_id, post_id=post_id).save()
-

@@ -12,7 +12,7 @@ router.register('session', SessionViewSet)
 router.register('step/file', StepFileViewSet)
 router.register('step', StepViewSet)
 router.register('course', CourseViewSet)
-router.register('sophistory', SopHistoryViewSet)
+router.register('history', SopHistoryViewSet)
 
 
 urlpatterns = [

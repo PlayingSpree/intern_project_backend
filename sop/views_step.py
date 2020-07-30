@@ -1,11 +1,10 @@
 from rest_framework import viewsets, mixins
-from rest_framework.parsers import MultiPartParser
 from rest_framework.permissions import IsAuthenticated
 
-from sop.models import Step ,SopHistory , Session
+from sop.models import Step
 from sop.permissions import IsAdminUser, get_permissions_multi
 from sop.serializers import StepSerializer
-from rest_framework.response import Response
+
 
 class StepViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin, mixins.RetrieveModelMixin, mixins.UpdateModelMixin,
                   mixins.DestroyModelMixin):

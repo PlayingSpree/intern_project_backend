@@ -1,11 +1,11 @@
 from rest_framework import viewsets, mixins
 from rest_framework.parsers import MultiPartParser
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.response import Response
 
 from sop.models import SopHistory
 from sop.permissions import get_permissions_multi
 from sop.serializers import SopHistorySerializer
-from rest_framework.response import Response
 
 
 class SopHistoryViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
@@ -28,5 +28,3 @@ class SopHistoryViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
             return self.get_paginated_response(serializer.data)
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
-
-
