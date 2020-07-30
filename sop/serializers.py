@@ -63,10 +63,15 @@ class SessionWithNoStepSerializer(serializers.ModelSerializer):
 
 class CourseSerializer(serializers.ModelSerializer):
     creator = UserDataSerializer(source='creator_id', read_only=True)
+    progress = serializers.SerializerMethodField(read_only=True)
+
+    def get_progress(self, obj):
+        return round(SopHistory.objects.filter(post_id__course=obj).count() / obj.posts.count() * 100, 2)
 
     class Meta:
         model = Course
-        fields = ['id', 'name', 'description', 'cover', 'publish', 'creator', 'posts', 'date_created', 'date_modified']
+        fields = ['id', 'name', 'description', 'cover', 'publish', 'creator', 'posts', 'progress', 'date_created',
+                  'date_modified']
         read_only_fields = ['id', 'creator', 'date_created', 'date_modified']
 
 
